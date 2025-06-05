@@ -19,14 +19,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&7jj^4znva-u9xk#hrpd_nf0jn7+japk^etrvr1jsgh*o&)-75'
+from decouple import config
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = []
 
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['your-app-name.onrender.com']
 
 # Application definition
 
@@ -184,3 +184,10 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 INSTALLED_APPS += ['django_celery_beat']
+
+
+
+import dj_database_url
+
+DATABASES['default'] = dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'), conn_max_age=600)
