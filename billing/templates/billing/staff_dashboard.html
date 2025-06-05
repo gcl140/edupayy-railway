@@ -1,0 +1,380 @@
+{% extends 'yuzzaz/besi.html' %}
+{% load humanize %}
+{% load static %}
+{% block content %}
+<main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100">
+    <!-- Welcome Banner -->
+    <div class="bg-gradient-to-r from-darkblue-700 to-darkblue-800 text-white rounded-xl p-6 mb-6 shadow-md">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+                <h2 class="text-2xl font-bold mb-2">Welcome back, {{user.first_name}}!</h2>
+                <p class="text-blue-100">Here's what's happening with your student payments today.</p>
+            </div>
+            <button
+                class="mt-4 md:mt-0 bg-yellow-500 hover:bg-yellow-600 text-darkblue-900 font-medium py-2 px-4 rounded-lg transition flex items-center space-x-2">
+                <i class="fas fa-plus"></i>
+                <span>Make Payment</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-bold">Total Balance</p>
+                    <h3 class="text-2xl font-bold text-{% if pending_total < 500000 %}green{% else %}red{% endif %}-500">
+                        TZS {{ pending_total|intcomma }}
+                    </h3>                    
+                </div>
+                <div class="bg-yellow-100 text-yellow-500 p-3 rounded-full">
+                    <i class="fas fa-wallet text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+                <span class="text-gray-500 ml-2">From </span>
+                <span class="text-green-500 flex items-center">
+                    <i class="fas fa-arrow-up ml-1 mr-1"></i>
+                    {{pendings_count}}
+                </span>
+                <span class="text-gray-500 ml-2">Invoices</span>
+            </div>
+        </div>
+        <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-bold">Amount Paid so far</p>
+                    <!-- <h3 class="text-2xl font-bold text-darkblue-800">TZS {{ paid_total|floatformat:2 }}</h3>intcomma| -->
+                    <h3 class="text-2xl font-bold text-darkblue-800">TZS {{ paid_total|intcomma }}</h3>
+                </div>
+                <div class="bg-green-100 text-green-500 p-3 rounded-full">
+                    <i class="fas fa-check-circle text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+                <span class="text-orange-500 flex items-center">
+                    <i class="fas fa-tachometer-alt mr-1"></i>
+                    {{rem_percent|floatformat:2}}%
+                </span>
+                <span class="text-gray-500 ml-2">remaining</span>
+            </div>
+        </div>
+        <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-bold">Pending Payments</p>
+                    <h3 class="text-2xl font-bold text-darkblue-800">{{ pendings_count }}</h3>
+                </div>
+                <div class="bg-blue-100 text-blue-500 p-3 rounded-full">
+                    <i class="fas fa-clock text-xl"></i>
+                </div>
+            </div>
+            {% if overdue_count > 0 %}
+            <div class="mt-4">
+                <span class="text-yellow-500 text-sm flex items-center">
+                    <i class="fas fa-exclamation-circle mr-1"></i>
+                    {{overdue_count}} invoices overdue
+                </span>
+            </div>
+            {% endif %}
+        </div>
+        <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-bold">All Students</p>
+                    <h3 class="text-2xl font-bold text-darkblue-800">{{students|length}}</h3>
+                </div>
+                <div class="bg-purple-100 text-purple-500 p-3 rounded-full">
+                    <i class="fas fa-user-graduate text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <span class="text-gray-500  text-sm">{% for student in students %} {{student.user.first_name}}, {% endfor %}</span>
+            </div>
+        </div>
+        <!-- FEE STRUCTURES -->
+<div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 text-sm font-bold">Fee Structures</p>
+            <h3 class="text-2xl font-bold text-darkblue-800">{{ fees_structures.count }}</h3>
+        </div>
+        <a href="{% url 'create_fee_structure' %}" class="bg-green-100 text-green-500 p-3 rounded-full hover:bg-green-200 transition">
+            <i class="fas fa-plus text-xl"></i>
+        </a>
+    </div>
+    <div class="mt-4 text-sm text-gray-500">Manage term-wise fees by class level.</div>
+</div>
+
+<!-- INVOICES -->
+<div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 text-sm font-bold">Invoices Issued</p>
+            <h3 class="text-2xl font-bold text-darkblue-800">{{ all_invoices.count }}</h3>
+        </div>
+        <a href="{% url 'create_invoice' %}" class="bg-blue-100 text-blue-500 p-3 rounded-full hover:bg-blue-200 transition">
+            <i class="fas fa-file-invoice-dollar text-xl"></i>
+        </a>
+    </div>
+    <div class="mt-4 text-sm text-gray-500">Generate or review invoices per student.</div>
+</div>
+
+<!-- STUDENTS -->
+<div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 text-sm font-bold">Students</p>
+            <h3 class="text-2xl font-bold text-darkblue-800">{{ students.count }}</h3>
+        </div>
+        <a href="{% url 'students' %}" class="bg-purple-100 text-purple-500 p-3 rounded-full hover:bg-purple-200 transition">
+            <i class="fas fa-user-plus text-xl"></i>
+        </a>
+    </div>
+    <div class="mt-4 text-sm text-gray-500">Add or manage student profiles.</div>
+</div>
+
+<!-- PAYMENTS -->
+<div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 text-sm font-bold">Payments</p>
+            <h3 class="text-2xl font-bold text-darkblue-800">{{ all_payments.count }}</h3>
+        </div>
+        <a href="{% url 'payments_history' %}" class="bg-yellow-100 text-yellow-500 p-3 rounded-full hover:bg-yellow-200 transition">
+            <i class="fas fa-credit-card text-xl"></i>
+        </a>
+    </div>
+    <div class="mt-4 text-sm text-gray-500">Record or view payment history.</div>
+</div>
+
+    </div>
+
+    <!-- Recent Activity and Upcoming Payments -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- Recent Payments -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-darkblue-800">Recent Payments</h3>
+                    <a href="{% url 'payments_history' %}" class="text-sm text-yellow-500 hover:text-yellow-600 font-medium">View All</a>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Term</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% if recent_payments %}
+                                {% for payment in recent_payments %}
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-darkblue-800">INV-{{ payment.invoice.id }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ payment.invoice.student.user.get_full_name }} 
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{payment.invoice.term}}
+                                            </td>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            TZS {{ payment.amount }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                {{ payment.invoice.status }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ payment.payment_date|date:"M d, Y" }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <a href="{% url 'download_receipt' payment.id %}" class="text-yellow-500 hover:text-yellow-600">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-darkblue-800">{{ payment.transaction_id }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">No recent payments found.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+
+        <!-- Upcoming Payments -->
+        <div class="bg-white rounded-xl shadow-md p-6 h-[500px] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-bold text-darkblue-800">Upcoming Payments ({{upcoming_invoices.count}})</h3>
+                <a href="{% url 'invoices' %}" class="text-sm text-yellow-500 hover:text-yellow-600 font-medium">View All</a>
+            </div>
+
+            <div class="space-y-4">
+                {% for invoice in upcoming_invoices %}
+                <div class="mb-4 transition-all hover:shadow-md">
+                    <!-- Invoice Card -->
+                    <div class="border-l-4 {% if invoice.due_date < today %}border-red-500 bg-red-50{% else %}border-yellow-500 bg-white{% endif %} rounded-r-lg overflow-hidden">
+                        <div class="p-4">
+                            <!-- Header Row -->
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="text-lg font-bold text-darkblue-800 tracking-tight">
+                                        INV-{{ invoice.id|stringformat:"06d" }}
+                                    </h4>
+                                    <p class="text-sm text-gray-600">
+                                        <i class="fas fa-user-graduate mr-1 text-yellow-500"></i>
+                                        {{ invoice.student.user.get_full_name }}
+                                    </p>
+                                </div>
+                                <span class="text-xl font-bold {% if invoice.due_date < today %}text-red-600{% else %}text-yellow-600{% endif %}">
+                                    TZS {{ invoice.total_amount|intcomma }}
+                                </span>
+                            </div>
+                
+                            <!-- Fee Details -->
+                            <div class="mb-4">
+                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                                    <i class="fas fa-tags mr-1"></i>Fee Breakdown
+                                </p>
+                                <ul class="grid grid-cols-2 gap-1">
+                                    {% for fee in invoice.fee_structures.all %}
+                                    <li class="flex items-center text-sm text-gray-600">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-2"></span>
+                                        {{ fee.fee_name }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                
+                            <!-- Due Date & Action -->
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center text-sm {% if invoice.due_date < today %}text-red-600{% else %}text-gray-600{% endif %}">
+                                    <i class="far fa-calendar-alt mr-2"></i>
+                                    <span>
+                                        Due {{ invoice.due_date|date:"M d, Y" }}
+                                        {% if invoice.due_date < today %}
+                                        <span class="ml-1 font-medium">(Overdue)</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-6">
+        <!-- Recent Payments -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-darkblue-800">Fee Structures</h3>
+                    <a href="{% url 'create_fee_structure' %}" class="text-sm bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow">
+                        + New Fee Structure
+                    </a>
+                </div>
+                
+                <div class="overflow-x-auto bg-white rounded-xl shadow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Class</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Term</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fee Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Effective Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% if fees_structures %}
+                                {% for fee in fees_structures %}
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ fee.class_level }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fee.term }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fee.fee_name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">TZS {{ fee.amount|intcomma }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ fee.effective_date|date:"M d, Y" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No fee structures available.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>                
+                    </table>
+                </div>
+                
+            </div>
+
+
+    </div>
+    <!-- All Students -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold text-darkblue-800">All Students</h3>
+            {% if students.count > 4 %}
+            <a href="{% url 'students' %}" class="text-sm text-yellow-500 hover:text-yellow-600 font-medium">View All</a>
+            {% endif %}
+        </div>
+    
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for student in students %}
+            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+
+                <div class="flex items-center space-x-4">
+                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}"
+                         alt="Student"
+                         class="w-16 h-16 rounded-full border-2 border-yellow-500">
+                    <div>
+                        <h4 class="font-bold text-darkblue-800"> 
+                            <a href="{% url 'student_detail_dashboard' student.id %}">
+                            {{ student.user.get_full_name }} - {{ student.admission_number }}
+                        </a>
+                    </h4>
+                        <h4 class="text-sm text-gray-600 flex items-center gap-1">
+                            <i class="fas fa-user-shield text-xs text-gray-500"></i>
+                            {{ student.parent.get_full_name }}
+                        </h4>
+
+                        <!-- <p class="text-sm text-gray-500">{{ student.admission_number }}</p> -->
+                        <p class="text-xs text-gray-500"><strong>Class level</strong>: {{ student.class_level }}</p>
+                        <div class="mt-1 flex items-center text-sm">
+                            <!-- <span class="text-gray-500">Balance:</span> -->
+                            <!-- <span class="ml-2 font-medium text-red-500">{{ student.balance }}</span>  placeholder -->
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-between">
+                    <a href="{% url 'student_detail_dashboard' student.id %}" class="text-sm text-yellow-500 hover:text-yellow-600 font-medium flex items-center">
+                        <i class="fas fa-eye mr-1"></i>
+                        View Details
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No students linked to your account.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+
+
+
+</main>
+{% endblock %}

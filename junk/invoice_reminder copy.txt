@@ -1,0 +1,7 @@
+Dear Parent,
+
+Your child {{ student_name }} has a pending invoice of Tzs {{ amount }} (Invoice ID: #{{ invoice_id }}).
+
+Please clear it before {{ due_date }}.
+
+Thank you.

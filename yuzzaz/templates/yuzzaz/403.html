@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied | Student Payment System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .lock-icon {
+            position: relative;
+            animation: shake 0.5s ease-in-out infinite alternate;
+        }
+        
+        .lock-body {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .lock-shine {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            z-index: 3;
+        }
+        
+        .lock-hole {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #1e3a8a;
+            border-radius: 50%;
+            z-index: 3;
+        }
+        
+        @keyframes shake {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div class="p-8 text-center">
+            <div class="flex justify-center mb-6">
+                <div class="lock-icon text-yellow-500 text-6xl relative">
+                    <div class="lock-body">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="lock-shine"></div>
+                    <div class="lock-hole"></div>
+                </div>
+            </div>
+            
+            <h1 class="text-4xl font-bold text-darkblue-800 mb-2">403</h1>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Access Forbidden</h2>
+            
+            <p class="text-gray-600 mb-6">
+                You don't have permission to access this page. 
+                Please contact the administrator if you believe this is an error.
+            </p>
+            
+            <div class="space-y-4">
+                <a href="{% url 'homepage' %}" class="block w-full bg-yellow-500 hover:bg-yellow-600 text-darkblue-900 font-bold py-3 px-4 rounded-lg transition duration-300 transform hover:scale-105">
+                    <i class="fas fa-home mr-2"></i> Return to Home
+                </a>
+                <a href="{% url 'login' %}" class="block w-full bg-yellow-500 hover:bg-yellow-600 text-darkblue-900 font-bold py-3 px-4 rounded-lg transition duration-300 transform hover:scale-105">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Login
+                </a>
+                
+                <a href="/contact" class="block w-full border-2 border-darkblue-700 text-darkblue-700 hover:bg-darkblue-50 font-bold py-3 px-4 rounded-lg transition duration-300">
+                    <i class="fas fa-envelope mr-2"></i> Contact Support
+                </a>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex justify-center space-x-4">
+                    <a href="#" class="text-gray-500 hover:text-darkblue-700">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-darkblue-700">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-darkblue-700">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-darkblue-700">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+                <p class="text-sm text-gray-500 mt-4">
+                    © 2023 Student Payment System. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

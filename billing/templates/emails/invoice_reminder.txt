@@ -1,0 +1,20 @@
+Dear Parent,
+
+This is a friendly reminder regarding the outstanding payment for {{ student_name }}.
+
+Invoice Details:
+Amount:       Tzs {{ amount }}
+Invoice ID:   #{{ invoice_id }}
+Due Date:     {{ due_date }}
+
+Please ensure the payment is completed by the due date to avoid any service interruptions.
+
+Make Payment Now: {{ payment_link }}
+
+If you've already made this payment, please disregard this reminder. For any questions, please contact our support team at admin@yourdomain.com.
+
+Thank you for your prompt attention to this matter.
+
+--
+EduPay System
+For support: admin@yourdomain.com

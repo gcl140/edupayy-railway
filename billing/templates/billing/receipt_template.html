@@ -1,0 +1,95 @@
+{% load static %}
+<!-- templates/billing/receipt_template.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Receipt</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #1a202c;
+            text-align: center;
+            /* margin-bottom: 1rem; */
+        }
+
+        .section {
+            /* margin-bottom: 2rem; */
+            border-bottom: 1px solid gray;
+            /* padding-bottom: 1rem; */
+        }
+
+        .label {
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .footer {
+            border-top: 1px solid #e2e8f0;
+            /* padding-top: 1rem; */
+            font-size: 0.9rem;
+            color: #718096;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center; color: #223150;">EDUPAYY</h1>
+    <h1>Payment Receipt</h1>
+
+    <!-- Receipt Info -->
+    <div class="section">
+        <p><span class="label">Receipt ID:</span> EDU-{{ payment.id|stringformat:"06d" }}</p>
+        <p><span class="label">Date:</span> {{ payment.payment_date|date:"F d, Y" }}</p>
+        <p><span class="label">Time:</span> {{ payment.payment_date|date:"h:i A" }}</p>
+        <p><span class="label">Status:</span> {{payment.invoice.status}}</p>
+    </div>
+
+    <!-- Student Info -->
+    <div class="section">
+        <p><span class="label">Student:</span> {{ payment.invoice.student.user.get_full_name }}</p>
+        <p><span class="label">Student ID:</span> STU-{{ payment.invoice.student.admission_number }}</p>
+        <p><span class="label">Invoice:</span> INV-{{ payment.invoice.id }}</p>
+        <p><span class="label">Academic Term:</span> {{ payment.invoice.term }}</p>
+    </div>
+
+    <!-- Payment Info -->
+    <div class="section">
+        <p><span class="label">Amount Paid:</span> TZS{{ payment.amount }}</p>
+        <p><span class="label">Payment Method:</span> {{ payment.method }}</p>
+        <p><span class="label">Transaction ID:</span> {{ payment.transaction_id }}</p>
+    </div>
+
+    <!-- Payment Breakdown -->
+    <!-- <div class="section">
+        <h2>Breakdown</h2>
+        <p><span class="label">Fee Type:</span> {{payment.invoice.fee_name}}</p>
+        <p><span class="label">Description:</span> {{ payment.invoice.term }} Tuition</p>
+        <p><span class="label">Subtotal:</span> TZS {{ payment.invoice.amount }}</p>
+        <p><span class="label">Total Paid:</span> TZS {{ payment.invoice.amount }}</p>
+    </div> -->
+
+    <!-- Thank You -->
+    <div class="section">
+        <p><strong>Thank you for your payment!</strong></p>
+        <p>This receipt confirms that your payment was processed successfully.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>This is an official receipt issued by the EduPay Student Billing System.</p>
+        <p>For inquiries, contact <a href="mailto:accounts@edupay.edu">accounts@edupay.edu</a>.</p>
+        <p>Processed on {{ payment.payment_date|date:"F d, Y h:i A" }}</p>
+    </div>
+</body>
+
+</html>

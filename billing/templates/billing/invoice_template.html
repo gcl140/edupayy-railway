@@ -1,0 +1,98 @@
+{% load static %}
+<!-- templates/billing/receipt_template.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Receipt</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #1a202c;
+            text-align: center;
+            /* margin-bottom: 1rem; */
+        }
+
+        .section {
+            /* margin-bottom: 2rem; */
+            border-bottom: 1px solid gray;
+            /* padding-bottom: 1rem; */
+        }
+
+        .label {
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .footer {
+            border-top: 1px solid #e2e8f0;
+            /* padding-top: 1rem; */
+            font-size: 0.9rem;
+            color: #718096;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center; color: #223150;">EDUPAYY</h1>
+    <h2>Invoice</h2>
+
+    <!-- Invoice Info -->
+    <div class="section">
+        <p><strong>Invoice ID:</strong> INV-{{ invoice.id|stringformat:"06d" }}</p>
+        <p><strong>Issue Date:</strong> {{ invoice.issue_date|date:"F d, Y" }}</p>
+        <p><strong>Due Date:</strong> {{ invoice.due_date|date:"F d, Y" }}</p>
+        <p><strong>Status:</strong> {{ invoice.status }}</p>
+    </div>
+
+    <!-- Student Info -->
+    <div class="section">
+        <p><strong>Student:</strong> {{ student.user.get_full_name }}</p>
+        <p><strong>Student ID:</strong> STU-{{ student.admission_number }}</p>
+        <p><strong>Academic Term:</strong> {{ invoice.term }}</p>
+    </div>
+
+    <!-- Breakdown -->
+    <div class="section">
+        <h3>Fee Breakdown</h3>
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid #ccc;">
+                    <th style="text-align: left;">Fee Name</th>
+                    <th style="text-align: right;">Amount (TZS)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fee in fees %}
+                <tr>
+                    <td>{{ fee.fee_structure.fee_name }}</td>
+                    <td style="text-align: right;">{{ fee.amount|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr style="border-top: 1px solid #ccc;">
+                    <td><strong>Total</strong></td>
+                    <td style="text-align: right;"><strong>{{ invoice.total_amount|floatformat:2 }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer" style="margin-top: 2em;">
+        <p>This is an official invoice issued by the EduPay Student Billing System.</p>
+        <p>For inquiries, contact <a href="mailto:accounts@edupay.edu">accounts@edupay.edu</a>.</p>
+    </div>
+</body>
+
+</html>

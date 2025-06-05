@@ -1,0 +1,552 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% if user.is_parent %}Parent{% elif user.is_staff %}Staff{% else %}Student{% endif %} Dashboard{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://unpkg.com/hyperscript.org@0.9.13"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"
+        integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
+        crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="{% static 'images/png.jpg' %}" type="image/x-icon">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkblue: {
+                            500: '#1e3a8a',
+                            600: '#1e40af',
+                            700: '#1d4ed8',
+                            800: '#1e3a8a',
+                            900: '#172554',
+                        },
+                        yellow: {
+                            500: '#eab308',
+                        }
+                    }
+                },
+                fontFamily: {
+                'sans': ['Funnel Display', 'sans-serif'],
+                'display': ['Funnel Display', 'sans-serif'],
+              }
+            }
+
+        }
+    </script>
+    <style>
+        .notification-dot {
+            padding: 0;
+        }
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: absolute;
+                z-index: 50;
+                height: 100vh;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "header"
+                    "main";
+                width: 0 !important;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 50;
+                height: 100vh;
+                top: 0;
+                left: 0;
+            }
+
+            .sidebar-open .sidebar {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.28);
+                z-index: 0;
+            }
+
+            .sidebar-open .sidebar-overlay {
+                display: block;
+            }
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar bg-darkblue-800 text-white w-64 flex-shrink-0" id="sidebar">
+            <div class="flex items-center justify-between p-4 border-b border-darkblue-700">
+                <div class="flex items-center spae-x-2">
+                    <a class="navbar-brand mr-2" href="{% url 'homepage' %}">
+                        <img src="{% static 'images/png.jpg' %}" alt="EduPAYY Logo" width="40">
+                    </a>
+                    <span class="text-xl font-bold">EduPAYY</span>
+                </div>
+                <button id="sidebarClose" class="md:hidden text-gray-300 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-4 border-b border-darkblue-700 flex items-center space-x-3">
+                <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}"
+                                    alt="User" class="w-10 h-10 object-cover rounded-full border-2 border-yellow-500">
+                                
+                <!-- <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Parent" class="w-10 h-10 rounded-full border-2 border-yellow-500"> -->
+                <div>
+                    <p class="font-medium">{{user.first_name}} {{user.last_name}}</p>
+                    <p class="text-xs text-gray-300">{% if user.is_parent %}Parent{% elif user.is_staff %}Staff{% else %}Student{% endif %}</p>
+                </div>
+            </div>
+            
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% if user.is_parent%} {% url 'parents_dashboard' %}{% elif user.is_staff%}{% url 'staff_dashboard' %}{% else %}{% url 'student_dashboard' %}{% endif %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-darkblue-700 hover:text-yellow-500 transition">
+                            <i class="fas fa-tachometer-alt w-5"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'notifications' %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-darkblue-700 hover:text-yellow-500 transition">
+                            <i class="fas fa-bell w-5"></i>
+                            <span>Notifications</span>
+                            {% if has_unread_notifications %}
+                            <span class="notification-dot bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ unread_count }}</span>
+                            {% endif %}
+                    </a>
+                    </li>
+                     <li>
+                        <a href="{% url 'invoices' %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-darkblue-700 hover:text-yellow-500 transition">
+                            <i class="fas fa-file-invoice-dollar w-5"></i>
+                            <span>Invoices</span>
+                            {%if all_pending_invoices %}
+                            <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{all_pending_invoices.count}}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'payments_history' %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-darkblue-700 hover:text-yellow-500 transition">
+                            <i class="fas fa-receipt w-5"></i>
+                            <span>Payments
+                            
+                            </span>
+                        </a>
+                    </li>
+                    {% if user.is_staff or user.is_parent %}
+                    <li>
+                        <a href="{% url 'students' %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-darkblue-700 hover:text-yellow-500 transition">
+                            <i class="fas fa-child w-5"></i>
+                            <span> My Students</span>
+                        </a>
+                    </li>
+                    {% endif %} 
+                    {% if user.is_staff %}
+                    <li>
+                        <a href="{% url 'feesstructures' %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-darkblue-700 hover:text-yellow-500 transition">
+                            <i class="fa fa-file-invoice w-5"></i>
+                            <span>Fees structures</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="{% url 'profile' %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-darkblue-700 hover:text-yellow-500 transition">
+                            <i class="fas fa-cog w-5"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="mt-8 pt-4 border-t border-darkblue-700">
+                    <a href="{% url 'logout' %}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-darkblue-700 hover:text-yellow-500 transition">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center space-x-4">
+                        <button class="lg:hidden text-gray-500 focus:outline-none" id="menu-toggle">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+    
+                        <h1 class="text-xl font-bold text-darkblue-800 md:block hidden">{% if user.is_parent %}Parent{% elif user.is_staff %}Staff{% else %}Student{% endif %} Dashboard</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- <div class="relative">
+                            <button class="text-gray-600 hover:text-darkblue-800">
+                                <i class="fas fa-bell"></i>
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                            </button>
+                        </div> -->
+                        <!-- Notifications Dropdown -->
+                        <div class="relative" x-data="{ open: false }">
+                            <!-- Notification Bell Button -->
+                            <button @click="open = !open"
+                                class="p-2 text-gray-500 hover:text-yellow-500 relative focus:outline-none transition-colors duration-200 group">
+                                <div class="relative">
+                                    <i class="fas fa-bell text-xl group-hover:animate-tada"></i>
+                                    {% if has_unread_notifications %}
+                                    <span class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">
+                                        <span class="flex h-3 w-3">
+                                            <span
+                                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                                            <span
+                                                class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                                        </span>
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </button>
+
+                            <!-- Notification Dropdown -->
+                            <div x-show="open" @click.away="open = false"
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95"
+                                class="absolute md:right-2 -left-60 mt-2 w-72 md:w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200 overflow-scroll max-h-[500px]">
+                                <!-- Header -->
+                                <div class="bg-blue-900 px-4 py-3 flex justify-between items-center">
+                                    <h4 class="text-sm font-semibold text-yellow-400 flex items-center">
+                                        <i class="fas fa-bell mr-2"></i>
+                                        Notifications
+                                    </h4>
+                                    <span class="text-xs text-yellow-300 bg-blue-800 px-2 py-1 rounded-full">
+                                        {{ notifications|length }} new
+                                    </span>
+                                </div>
+
+                                <!-- Notification Content -->
+                                <div class="divide-y divide-gray-100">
+                                    {% if notifications %}
+                                    <ul class="max-h-72 overflow-y-auto">
+                                        {% for note in notifications %}
+                                        <li class="p-3 hover:bg-blue-50 transition-colors duration-150">
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0 text-yellow-500 mr-3 mt-0.5">
+                                                    <i class="fas fa-{% if 'message' in note.title.lower %}envelope{% else %}exclamation-circle{% endif %}"></i>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-blue-900 truncate">{{ note.title }}</p>
+                                                    <p class="text-xs text-gray-600 mt-1">{{ note.message|truncatewords:12 }}</p>
+                                                    <div class="flex justify-between items-center mt-2">
+                                                        <span class="text-[11px] text-gray-400">
+                                                            <i class="far fa-clock mr-1"></i>{{ note.created_at|timesince }} ago
+                                                        </span>
+                                                        <button class="text-xs text-blue-700 hover:text-yellow-600">
+                                                            {% if note.is_unread %}
+                                                            <i class="fa-solid fa-eye"></i>
+                                                            {% else %}
+                                                            <i class="fa-solid fa-circle-check"></i>
+                                                            {% endif %}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                        
+                                    </ul>
+                                    {% else %}
+                                    <div class="p-4 text-center">
+                                        <i class="far fa-bell-slash text-yellow-400 text-2xl mb-2"></i>
+                                        <p class="text-sm text-gray-500">No new notifications</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Footer -->
+                                {% if has_unread_notifications %}
+                                <div class="bg-gray-50 px-4 py-2 text-center border-t border-gray-100">
+                                    <form action="{% url 'mark_all_notifications_read' %}" method="post"
+                                        hx-post="{% url 'mark_all_notifications_read' %}" hx-trigger="click"
+                                        hx-swap="none">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                            class="text-xs font-medium text-blue-900 hover:text-yellow-600">
+                                            Mark all as read
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Toast Container -->
+                        <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
+
+                        <script>
+                            function showToast(message) {
+                                const toast = document.createElement('div');
+                                toast.className = 'bg-yellow-400 text-blue-900 text-sm px-4 py-2 rounded shadow-md animate-slide-in';
+                                toast.innerText = message;
+                                document.getElementById('toast-container').appendChild(toast);
+                                setTimeout(() => {
+                                    toast.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                                    setTimeout(() => toast.remove(), 500);
+                                }, 3000);
+                            }
+
+                            document.body.addEventListener('htmx:afterRequest', (evt) => {
+                                const url = evt.detail.xhr.responseURL;
+                                if (url.endsWith('/notifications/mark-all-read/')) {
+                                    // Remove notification dot
+                                    const dot = document.querySelector('.notification-dot, .bg-yellow-400');
+                                    if (dot) dot.style.display = 'none';
+
+                                    // Change "Mark all as read" to "Already read"
+                                    const markAllLink = document.querySelector('[hx-post*="mark-all-read"]');
+                                    if (markAllLink) {
+                                        markAllLink.innerHTML = 'Already read';
+                                        markAllLink.classList.add('pointer-events-none', 'text-gray-400');
+                                    }
+
+                                    // Change eye icon to check in each notification item
+                                    document.querySelectorAll('i.fa-solid.fa-eye').forEach(icon => {
+                                        icon.classList.remove('fa-eye');
+                                        icon.classList.add('fa-circle-check');
+                                    });
+
+                                    // Show toast
+                                    showToast('All notifications marked as read.');
+                                }
+                            });
+                        </script>
+
+                        <style>
+                            @keyframes slide-in {
+                                from {
+                                    transform: translateY(-20px);
+                                    opacity: 0;
+                                }
+
+                                to {
+                                    transform: translateY(0);
+                                    opacity: 1;
+                                }
+                            }
+
+                            .animate-slide-in {
+                                animation: slide-in 0.3s ease-out forwards;
+                            }
+                        </style>
+
+
+                        <!-- Add this to your CSS for the bell animation -->
+                        <style>
+                            @keyframes tada {
+                                0% {
+                                    transform: scale(1);
+                                }
+
+                                10%,
+                                20% {
+                                    transform: scale(0.9) rotate(-3deg);
+                                }
+
+                                30%,
+                                50%,
+                                70%,
+                                90% {
+                                    transform: scale(1.1) rotate(3deg);
+                                }
+
+                                40%,
+                                60%,
+                                80% {
+                                    transform: scale(1.1) rotate(-3deg);
+                                }
+
+                                100% {
+                                    transform: scale(1) rotate(0);
+                                }
+                            }
+
+                            .animate-tada {
+                                animation: tada 1s ease;
+                            }
+                        </style>
+
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
+                                <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}"
+                                    alt="User" class="w-8 h-8 rounded-full object-cover">
+                                <span class="md:inline text-sm font-medium">Hi, {{user.first_name}}</span>
+                                <i class="fas fa-chevron-down text-xs hidden md:inline"></i>
+                            </button>
+
+                            <div x-show="open" @click.away="open = false"
+                                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95">
+                                <a href="{% url 'profile' %}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help
+                                    Center</a>
+                                <div class="border-t border-gray-200"></div>
+                                <a href="{% url 'logout' %}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+{% block content %}{% endblock %}
+</div>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+{% if messages %}
+<div class="fixed top-6 right-6 space-y-3 z-50" id="messages-container">
+    {% for message in messages %}
+    <div 
+        class="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg rounded-lg overflow-hidden min-w-80 max-w-sm transition-all duration-300 hover:shadow-xl message"
+        data-timeout="10000">
+        
+        <div class="p-4 flex items-start">
+            <div class="flex-shrink-0">
+                {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle text-emerald-500 text-xl mr-3"></i>
+                {% elif message.tags == 'error' %}
+                <i class="fas fa-exclamation-circle text-rose-500 text-xl mr-3"></i>
+                {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-triangle text-amber-500 text-xl mr-3"></i>
+                {% else %}
+                <i class="fas fa-info-circle text-sky-500 text-xl mr-3"></i>
+                {% endif %}
+            </div>
+            <div class="flex-grow">
+                <p class="text-sm text-gray-700">{{ message }}</p>
+            </div>
+            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors"
+                onclick="this.closest('.message').remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        {% if message.tags == 'success' %}
+        <div class="h-1 w-full bg-gradient-to-r from-emerald-400 to-emerald-500"></div>
+        {% elif message.tags == 'error' %}
+        <div class="h-1 w-full bg-gradient-to-r from-rose-400 to-rose-500"></div>
+        {% elif message.tags == 'warning' %}
+        <div class="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-500"></div>
+        {% else %}
+        <div class="h-1 w-full bg-gradient-to-r from-sky-400 to-sky-500"></div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const messages = document.querySelectorAll('.message');
+    
+    messages.forEach(message => {
+        const timeout = parseInt(message.getAttribute('data-timeout')) || 10000;
+        
+        // Auto-dismiss after timeout
+        const timer = setTimeout(() => {
+            message.style.opacity = '0';
+            message.style.transform = 'translateX(100%)';
+            setTimeout(() => message.remove(), 300);
+        }, timeout);
+        
+        // Pause timer on hover
+        message.addEventListener('mouseenter', () => {
+            clearTimeout(timer);
+        });
+        
+        // Resume timer when mouse leaves
+        message.addEventListener('mouseleave', () => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                message.style.transform = 'translateX(100%)';
+                setTimeout(() => message.remove(), 300);
+            }, timeout);
+        });
+    });
+});
+</script>
+
+<style>
+.message {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+</style>
+{% endif %}
+<script>
+    // Toggle mobile sidebar
+    document.getElementById('menu-toggle').addEventListener('click', function () {
+        document.body.classList.toggle('sidebar-open');
+    });
+
+    // Close sidebar when clicking overlay
+    document.getElementById('sidebar-overlay').addEventListener('click', function () {
+        document.body.classList.remove('sidebar-open');
+    });
+    document.getElementById('sidebarClose').addEventListener('click', function () {
+        document.body.classList.remove('sidebar-open');
+    });
+    
+
+    // Initialize Alpine.js for dropdown functionality
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('dropdown', () => ({
+            open: false,
+            toggle() {
+                this.open = !this.open
+            }
+        }))
+    });
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script></body>
+</html>

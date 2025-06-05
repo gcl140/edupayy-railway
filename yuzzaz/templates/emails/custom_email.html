@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ heading }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .email-header {
+            background-color: #1e293b; /* dark-blueish */
+            color: #fbbf24; /* gold */
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .email-body {
+            padding: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .email-body h2 {
+            color: #1e293b;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        .email-body h3 {
+            color: #334155;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .email-body p {
+            margin: 10px 0;
+        }
+        .email-footer {
+            padding: 15px;
+            background-color: #f9fafb;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container" style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 2rem; color: #1e293b;">
+        <div class="email-header" style="font-size: 1.5rem; font-weight: bold; color: #d4af37; margin-bottom: 1.5rem;">
+            {{ heading }}
+        </div>
+    
+        <div class="email-body" style="background-color: white; padding: 1.5rem; border-radius: 8px;">
+            <h2 style="margin-bottom: 1rem;">Dear {{ full_name }},</h2>
+    
+            <p style="margin-bottom: 1rem;">
+                We're excited to have you engaged with {% if user.is_intern %} TanSAF Internship {% else %} Senior Cohort {% endif %} program. Whether you're just getting started or continuing your journey, we're here to support you every step of the way.
+            </p>
+    
+            <p style="margin-bottom: 1rem;">
+                {{ content }}
+            </p>
+
+            <p style="margin-bottom: 1rem;">
+                <b>{{ content1 }}</b>
+            </p>
+
+            <p style="margin-bottom: 1rem;">
+                {{ content2 }}
+            </p>
+    
+            <p style="margin-bottom: 1rem;">
+                If you have any questions or need clarification, feel free to reach out to us at <strong>+255658129202</strong>. Our team is always ready to assist you.
+            </p>
+    
+            <p style="margin-top: 2rem;">Warm regards,</p>
+            <p><strong>TanSAF Team</strong></p>
+        </div>
+    
+        <div class="email-footer" style="text-align: center; font-size: 0.9rem; margin-top: 2rem; color: #64748b;">
+            © {{ current_year }} TanSAF. All rights reserved.
+        </div>
+    </div>
+
+</body>
+</html>

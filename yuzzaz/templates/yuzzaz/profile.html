@@ -1,0 +1,154 @@
+{% extends "yuzzaz/besi.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Profile{% endblock %}
+{% block content %}
+<main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100">
+
+    <style>
+        a {
+            text-decoration: none;
+            color: ivory;
+        }
+    </style>
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-500">Welcome, {{ user.first_name }}!</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-500 mt-2">Here is your profile information</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Profile Card (Left Side) -->
+            <div class="w-full lg:w-1/3">
+                <div class="bg-white dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden p-6 text-center">
+                    <!-- Profile Picture -->
+                    <div class="relative mx-auto w-32 h-32 rounded-full border-4 border-yellow-400 overflow-hidden">
+                        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}"
+                            alt="Profile Picture" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- User Name -->
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mt-4">
+                        {{ user.first_name }} {{ user.last_name }}
+                    </h3>
+
+                    <!-- Email -->
+                    <p class="text-gray-600 dark:text-gray-300 mt-1">
+                        <i class="fas fa-envelope mr-2 text-blue-500"></i>
+                        {{ user.email }}
+                    </p>
+
+                    <!-- Social Links -->
+                    <div class="flex justify-center space-x-4 mt-6">
+                        
+                        <a href="mailto:{{ user.email }}"
+                            class="w-10 h-10 rounded-full bg-red-100 dark:bg-gray-600 flex items-center justify-center text-red-600 dark:text-red-300 hover:bg-red-200 dark:hover:bg-gray-500 transition-colors">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <a href="tel:{{ user.phone_number }}"
+                            class="w-10 h-10 rounded-full bg-blue-100 dark:bg-gray-600 flex items-center justify-center text-blue-400 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-gray-500 transition-colors">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information Card (Right Side) -->
+            <div class="w-full lg:w-2/3">
+                <div class="bg-white dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <h4 class="text-xl font-bold text-blue-900 dark:text-white mb-6 flex items-center">
+                            <i class="fas fa-user-circle mr-2 text-yellow-500"></i>
+                            Your Information
+                        </h4>
+
+                        <div class="space-y-4">
+                            <div class="flex flex-col sm:flex-row">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400 w-full sm:w-1/3">First
+                                    Name:</span>
+                                <span class="text-gray-800 dark:text-gray-200 font-medium">{{ user.first_name }}</span>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400 w-full sm:w-1/3">Last
+                                    Name:</span>
+                                <span class="text-gray-800 dark:text-gray-200 font-medium">{{ user.last_name }}</span>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row">
+                                <span
+                                    class="text-sm font-medium text-gray-500 dark:text-gray-400 w-full sm:w-1/3">Official
+                                    Email:</span>
+                                <span class="text-gray-800 dark:text-gray-200 font-medium">{{ user.email }}</span>
+                            </div>
+                        </div>
+
+                        <button id="updateButton"
+                            class="mt-6 px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-medium rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-edit mr-2"></i>
+                            Update Information
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Update Section (Hidden by default) -->
+                <div id="updateSection"
+                    class="hidden mt-6 bg-white dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <h4 class="text-xl font-bold text-blue-900 dark:text-white mb-6 flex items-center">
+                            <i class="fas fa-user-edit mr-2 text-yellow-500"></i>
+                            Update Your Information
+                        </h4>
+
+                        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                            {% csrf_token %}
+
+                            {% for field in form %}
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    {{ field.label }}
+                                </label>
+                                {{ field|add_class:"w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-white dark:bg-gray-800 dark:text-white" }}
+                            </div>
+                            {% endfor %}
+
+                            <div class="flex justify-end pt-4">
+                                <button type="submit"
+                                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center">
+                                    <i class="fas fa-save mr-2"></i>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // JavaScript to toggle visibility of the update form
+    document.getElementById('updateButton').addEventListener('click', function () {
+        var updateSection = document.getElementById('updateSection');
+        updateSection.classList.toggle('hidden');
+    });
+</script>
+
+<style>
+    /* Smooth transitions for form toggle */
+    #updateSection {
+        transition: all 0.3s ease;
+    }
+
+    /* Custom styling for form inputs */
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3);
+    }
+</style>
+{% endblock %}

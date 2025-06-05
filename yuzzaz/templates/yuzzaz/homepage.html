@@ -1,0 +1,315 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduPAYY</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              dark: '#0a1a35',
+              DEFAULT: '#142d55',
+              light: '#1d3e7a',
+            },
+            secondary: {
+              dark: '#d4a017',
+              DEFAULT: '#e9b949',
+              light: '#f8d77e',
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Poppins:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="shortcut icon" href="{% static 'images/png.jpg' %}" type="image/x-icon">
+  
+  <style>
+    .gradient-text {
+      background: linear-gradient(90deg, #e9b949 0%, #f8d77e 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .card-hover-effect {
+      transition: all 0.3s ease;
+      transform-style: preserve-3d;
+    }
+    .card-hover-effect:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .hero-video {
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0));
+    }
+  </style>
+</head>
+<body class="bg-primary-dark text-white font-sans min-h-screen flex flex-col">
+    {% if portal_open %}
+  <!-- NAVBAR -->
+  <nav class="w-full py-4 px-6 glass-effect fixed top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <a href="{% url 'homepage' %}" class="flex items-center space-x-2">
+        <img src="{% static 'images/png.jpg' %}" alt="EduPAYY Logo" class="w-10 h-10">
+        <span class="text-2xl font-display font-bold gradient-text">EduPAYY</span>
+      </a>
+
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="https://beta.EduPAYY.or.tz" class="hover:text-secondary-light transition-colors">About</a>
+        <a href="https://beta.EduPAYY.or.tz/contact" class="hover:text-secondary-light transition-colors">Contact</a>
+        <a href="{% url 'login' %}" class="bg-secondary-dark hover:bg-secondary-light text-primary-dark font-bold px-6 py-2 rounded-full transition-all transform hover:scale-105">
+          Login
+        </a>
+      </div>
+
+      <button class="md:hidden text-2xl focus:outline-none" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div class="md:hidden hidden absolute top-full left-0 w-full bg-primary-dark py-4 px-6 shadow-xl" id="mobileMenu">
+      <div class="flex flex-col space-y-4">
+        <a href="https://beta.EduPAYY.or.tz" class="hover:text-secondary-light transition-colors">About</a>
+        <a href="https://beta.EduPAYY.or.tz/contact" class="hover:text-secondary-light transition-colors">Contact</a>
+        <a href="{% url 'login' %}" class="bg-secondary-dark hover:bg-secondary-light text-primary-dark font-bold px-6 py-2 rounded-full text-center transition-all">
+          Login
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <div class="relative flex-grow pt-24">
+    <div class="absolute inset-0 overflow-hidden">
+      <img src="{% static 'assets/videos/hello.jpg' %}" alt="EduPAYY Students" class="w-full h-full object-cover hero-video">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary-dark/80 to-primary-dark"></div>
+    </div>
+    
+    <div class="relative z-10 container mx-auto px-6 py-12">
+      <div class="max-w-4xl mx-auto text-center mb-12">
+        <!-- Info Alerts -->
+        <div class="space-y-3 mb-8">
+        
+<!-- Info 3: Deadline warning with countdown -->
+<div class="bg-primary-light/20 border-l-4 border-red-500 p-4 text-left rounded-r-lg mb-4">
+  <div class="flex items-start">
+    <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
+    <p class="text-sm">
+      The deadline for early consideration is approaching: <strong>May 30</strong>.
+      <span id="countdown" class="font-semibold text-red-600 ml-1"></span>
+    </p>
+  </div>
+</div>
+
+          <div class="bg-primary-light/20 border-l-4 border-secondary-light p-4 text-left rounded-r-lg">
+            <div class="flex items-start">
+              <i class="fas fa-circle-info text-secondary-light mt-1 mr-3"></i>
+              <p class="text-sm">You are about to log in or create a EduPAYY account.
+If registering for a new account, carefully select the portal for the program you wish to join, as this cannot be changed later.
+For example, to apply for an internship, register under "Apply as an parent" to create an parent applicant account (you won't be able to switch to a senior cohort applicant account later).
+If you already have an account, logging in will take you directly to the saved progress of the application type you initially registered for.              </p>
+            </div>
+          </div>
+          
+
+<!-- Info 2: Account creation instructions -->
+<div class="bg-primary-light/20 border-l-4 border-secondary-light p-4 text-left rounded-r-lg mb-4">
+  <div class="flex items-start">
+    <i class="fas fa-circle-info text-secondary-light mt-1 mr-3"></i>
+    <p class="text-sm">
+      When creating an account, first choose your application type (Parent or Senior Cohort), then enter your credentials. Ensure your email is valid, accessible, and active. A confirmation code will be sent to it, and click the "Activate Account" link in that email to complete registration. You can then log in using the email and password you registered with.
+    </p>
+  </div>
+</div>
+
+<!-- Info 1: Parent note -->
+<div class="bg-primary-light/20 border-l-4 border-secondary-light p-4 text-left rounded-r-lg mb-4">
+  <div class="flex items-start">
+    <i class="fas fa-circle-info text-secondary-light mt-1 mr-3"></i>
+    <p class="text-sm">
+      Parents are also members of the senior cohort program, with the added responsibility of supporting office operations.
+    </p>
+  </div>
+</div>
+<!-- Countdown script -->
+<script>
+  const deadline = new Date("2025-05-30T23:59:59").getTime();
+  const countdownElem = document.getElementById("countdown");
+
+  const interval = setInterval(() => {
+    const now = new Date().getTime();
+    const distance = deadline - now;
+
+    if (distance < 0) {
+      clearInterval(interval);
+      countdownElem.innerText = "Deadline passed.";
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    
+    countdownElem.innerText = `(${days}d ${hours}h ${minutes}m left)`;
+  }, 1000);
+</script>
+
+
+          <!--<div class="bg-primary-light/20 border-l-4 border-secondary-light p-4 text-left rounded-r-lg">-->
+          <!--  <div class="flex items-start">-->
+          <!--    <i class="fas fa-circle-info text-secondary-light mt-1 mr-3"></i>-->
+          <!--    <p class="text-sm">-->
+          <!--                          If you or your parents would like to know more about the EduPAYY Senior Cohort program, please register for the information sessions here. These information sessions will be conducted in mid-May.</p>-->
+          <!--  </div>-->
+          <!--</div>-->
+        </div>
+        
+        <h1 class="text-5xl md:text-6xl font-display font-bold mb-6">
+          <span class="gradient-text">Your Future</span> Starts Here
+        </h1>
+        <p class="text-xl text-gray-300 mb-12">Join Tanzania's most transformative educational leadership program</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <!-- Parent Card -->
+        <div class="bg-gradient-to-br from-primary-dark to-primary-light rounded-2xl p-0.5 card-hover-effect">
+          <div class="bg-primary-dark rounded-2xl p-8 h-full">
+            <div class="flex flex-col items-center h-full">
+              <div class="w-20 h-20 rounded-full bg-secondary-dark/20 flex items-center justify-center mb-6">
+                <i class="fas fa-briefcase text-3xl text-secondary-light"></i>
+              </div>
+              <h3 class="text-2xl font-display font-bold mb-3">Apply as an Parent</h3>
+              <p class="text-gray-300 mb-6 text-center">Ready to learn, lead, and level up? Step into impact as a EduPAYY Parent!</p>
+              <div class="mt-auto w-full space-y-3">
+                <a href="{% url 'login' %}" class="block w-full bg-secondary-dark hover:bg-secondary-light text-primary-dark font-bold py-3 px-6 rounded-full text-center transition-all transform hover:scale-[1.02]">
+                  Login
+                </a>
+                <a href="{% url 'register' 'parent' %}" class="block w-full border-2 border-secondary-light hover:bg-secondary-light/10 text-secondary-light font-bold py-3 px-6 rounded-full text-center transition-all transform hover:scale-[1.02]">
+                  Register
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Senior Cohort Card -->
+        <div class="bg-gradient-to-br from-primary-dark to-primary-light rounded-2xl p-0.5 card-hover-effect">
+          <div class="bg-primary-dark rounded-2xl p-8 h-full">
+            <div class="flex flex-col items-center h-full">
+              <div class="w-20 h-20 rounded-full bg-secondary-dark/20 flex items-center justify-center mb-6">
+                <i class="fas fa-users text-3xl text-secondary-light"></i>
+              </div>
+              <h3 class="text-2xl font-display font-bold mb-3">Apply as a Senior Cohort Member</h3>
+              <p class="text-gray-300 mb-6 text-center">Become part of a learning community as you grow your skills.</p>
+              <div class="mt-auto w-full space-y-3">
+                <a href="{% url 'login' %}" class="block w-full bg-secondary-dark hover:bg-secondary-light text-primary-dark font-bold py-3 px-6 rounded-full text-center transition-all transform hover:scale-[1.02]">
+                  Login
+                </a>
+                <a href="{% url 'register' 'student' %}" class="block w-full border-2 border-secondary-light hover:bg-secondary-light/10 text-secondary-light font-bold py-3 px-6 rounded-full text-center transition-all transform hover:scale-[1.02]">
+                  Register
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> 
+      <br>
+      <br>
+      <center>
+      <small style="text-align: center;">
+      Made with 💚 by <a target="_blank" style="color: grey;" rel="noopener noreferrer" href="https://www.instagram.com/p/DD2M_0QqbRk/?igsh=MWJhOXBrbXR0cWFlYQ==">GCL</a>
+      </small>
+      </center>
+    </div>
+  </div> 
+  
+
+  <!-- TOAST MESSAGES -->
+  {% if messages %}
+    <div class="fixed top-6 right-6 space-y-3 z-50">
+      {% for message in messages %}
+        <div class="relative glass-effect rounded-lg overflow-hidden min-w-80 max-w-sm">
+          <div class="p-4 flex items-start">
+            <div class="flex-shrink-0">
+              {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle text-green-400 text-xl mr-3"></i>
+              {% elif message.tags == 'error' %}
+                <i class="fas fa-exclamation-circle text-red-400 text-xl mr-3"></i>
+              {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-triangle text-yellow-400 text-xl mr-3"></i>
+              {% else %}
+                <i class="fas fa-info-circle text-blue-400 text-xl mr-3"></i>
+              {% endif %}
+            </div>
+            <div class="flex-grow">
+              <p class="text-sm">{{ message }}</p>
+            </div>
+            <button type="button" class="ml-4 text-gray-400 hover:text-white" onclick="this.parentElement.parentElement.remove()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="h-1 w-full bg-gradient-to-r from-secondary-dark to-secondary-light"></div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- SCRIPTS -->
+  <script>
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#mobileMenu') && !e.target.closest('#mobileMenuBtn') && !mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+      }
+    });
+  </script>
+
+{% else %}
+  <!-- Portal Closed State -->
+  <div class="flex-grow flex items-center justify-center bg-gradient-to-br from-primary-dark to-primary-light p-6">
+    <div class="text-center max-w-2xl bg-primary-dark/90 backdrop-blur-sm rounded-2xl p-12 shadow-2xl border border-white/10">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-secondary-dark/20 mb-6">
+        <i class="fas fa-clock text-3xl text-secondary-light"></i>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 gradient-text">Portal Not Yet Open</h1>
+      <p class="text-xl text-gray-300 mb-6">
+        Applications are currently <strong class="text-secondary-light">NOT</strong> open. We recommend checking back frequently for the latest updates.
+      </p>
+      <div class="animate-pulse text-secondary-light">
+        <i class="fas fa-arrow-down mr-2"></i> Stay tuned for updates
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+</body>
+</html>

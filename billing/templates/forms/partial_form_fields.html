@@ -1,0 +1,41 @@
+<div class="space-y-2">
+  <label class="block text-sm font-medium text-gray-700">
+      Students
+  </label>
+  <div class="space-y-3">
+      <label class="inline-flex items-center">
+          <input type="checkbox" name="all_fitting_students" 
+                 class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
+          <span class="ml-2 text-gray-700">Select All Matching Students</span>
+      </label>
+      
+      <div class="relative">
+          <select name="students" multiple 
+                  class="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700">
+              {% for student in students %}
+                  <option value="{{ student.id }}">{{ student }}</option>
+              {% endfor %}
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <i class="fas fa-users text-gray-400"></i>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="space-y-2">
+  <label class="block text-sm font-medium text-gray-700">
+      Fee Structures <span class="text-red-500">*</span>
+  </label>
+  <div class="relative">
+      <select name="fee_structures" multiple id="fee-structures"
+              class="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700">
+          {% for fee in fee_structures %}
+              <option value="{{ fee.id }}" data-amount="{{ fee.amount }}">{{ fee }}</option>
+          {% endfor %}
+      </select>
+      <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <i class="fas fa-tags text-gray-400"></i>
+      </div>
+  </div>
+</div>

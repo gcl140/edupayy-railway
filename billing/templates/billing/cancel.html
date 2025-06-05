@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Cancelled | EduPay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+        }
+        .cross-circle {
+            animation: cross-circle-anim 0.6s ease-in-out;
+        }
+        .cross {
+            animation: cross-anim 0.5s ease-in-out 0.4s both;
+        }
+        @keyframes cross-circle-anim {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes cross-anim {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden text-center">
+            <!-- Header -->
+            <div class="gradient-bg p-6">
+                <div class="flex justify-center items-center space-x-2">
+                    <i class="fas fa-graduation-cap text-yellow-400 text-2xl"></i>
+                    <span class="text-xl font-bold text-white">EduPay</span>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-8">
+                <div class="relative w-24 h-24 mx-auto mb-6">
+                    <svg class="cross-circle w-full h-full text-red-500" viewBox="0 0 52 52">
+                        <circle cx="26" cy="26" r="25" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <svg class="cross absolute top-0 left-0 w-full h-full text-red-500" viewBox="0 0 52 52">
+                        <path fill="none" stroke="currentColor" stroke-width="4" d="M16 16 36 36 M36 16 16 36"/>
+                    </svg>
+                </div>
+                
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Payment Cancelled</h1>
+                <p class="text-gray-600 mb-6">Your payment was not completed. No charges have been made to your account.</p>
+                
+                <div class="space-y-3">
+                    <a href="{% url 'checkout' %}" class="block bg-yellow-500 hover:bg-yellow-600 text-darkblue-900 font-medium py-2 px-4 rounded-lg transition">
+                        <i class="fas fa-credit-card mr-2"></i> Try Payment Again
+                    </a>
+                    <a href="{% url 'dashboard' %}" class="block border border-darkblue-700 text-darkblue-700 hover:bg-blue-50 font-medium py-2 px-4 rounded-lg transition">
+                        <i class="fas fa-home mr-2"></i> Return to Dashboard
+                    </a>
+                </div>
+                
+                <div class="mt-6 text-sm text-gray-500">
+                    <p>If this was a mistake, please <a href="#" class="text-yellow-600 hover:underline">contact support</a>.</p>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="bg-gray-100 p-4 text-center text-sm text-gray-600">
+                <p>Need help? <a href="#" class="text-yellow-600 hover:underline">Contact our team</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

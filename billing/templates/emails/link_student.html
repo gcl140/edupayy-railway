@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parent Confirmation Request</title>
+</head>
+<body style="font-family: 'Funnel Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f7fa; color: #1e3a8a;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+    <!-- Header -->
+    <tr>
+      <td style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8); padding: 30px 20px; border-radius: 8px 8px 0 0; text-align: center;">
+        <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 600;">Parent Confirmation Request</h1>
+      </td>
+    </tr>
+    
+    <!-- Content -->
+    <tr>
+      <td style="padding: 30px 25px;">
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">Hi {{ parent.get_full_name() }},</p>
+        
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
+          <strong style="color: #1e3a8a;">{{ request.user.get_full_name() }}</strong> has listed you as their parent on EduPayy.
+        </p>
+        
+        <div style="background-color: #f8fafc; border-left: 4px solid #1d4ed8; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0;">
+          <p style="margin: 0 0 10px 0; font-size: 15px; color: #64748b; text-align: center;"><strong>Please confirm your relationship:</strong></p>
+          
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 15px 0;">
+            <tr>
+              <td align="center" style="padding-bottom: 10px;">
+                <a href="{{ request.build_absolute_uri(reverse('respond_parent_request', args=[req.id, 'accept'])) }}" 
+                   style="display: inline-block; background-color: #1d4ed8; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 15px; box-shadow: 0 2px 5px rgba(29, 78, 216, 0.3); margin-right: 10px;">
+                  Accept Request
+                </a>
+              </td>
+              <td align="center">
+                <a href="{{ request.build_absolute_uri(reverse('respond_parent_request', args=[req.id, 'reject'])) }}" 
+                   style="display: inline-block; background-color: #ffffff; color: #1e3a8a; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 15px; border: 1px solid #1e3a8a; box-shadow: 0 2px 5px rgba(30, 58, 138, 0.1);">
+                  Reject Request
+                </a>
+              </td>
+            </tr>
+          </table>
+          
+          <p style="margin: 15px 0 0 0; font-size: 13px; color: #64748b; text-align: center;">
+            Links will expire in 7 days
+          </p>
+        </div>
+        
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
+          By confirming this relationship, you'll be able to view and manage your child's EduPayy account.
+        </p>
+        
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
+          If you didn't expect this request or don't recognize the student, please reject it or contact our support team.
+        </p>
+        
+        <p style="margin: 0; font-size: 16px; line-height: 1.6;">Thanks,<br>EduPayy Team</p>
+      </td>
+    </tr>
+    
+    <!-- Footer -->
+    <tr>
+      <td style="padding: 20px 25px; background-color: #f8fafc; border-radius: 0 0 8px 8px; font-size: 14px; color: #64748b; text-align: center;">
+        <p style="margin: 0 0 8px 0;">
+          <img src="https://edupayy.com/static/images/logo.png" alt="EduPayy Logo" width="120" style="vertical-align: middle;">
+        </p>
+        <p style="margin: 0;">For support, contact <a href="mailto:support@edupayy.com" style="color: #1d4ed8; text-decoration: none;">support@edupayy.com</a></p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

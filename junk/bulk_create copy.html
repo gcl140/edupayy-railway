@@ -1,0 +1,70 @@
+{% load static %}
+<html>
+<head>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="p-6 bg-gray-100">
+  <form method="post" class="space-y-4 p-6 bg-white shadow rounded-xl">
+    {% csrf_token %}
+
+    <div>
+      <label class="block font-medium">Term</label>
+      <select name="term" hx-get="{% url 'load_invoice_form_options' %}" hx-target="#dependent-fields" hx-include="[name='class_level']" class="w-full p-2 border rounded">
+        {% for value, label in form.term.field.choices %}
+          <option value="{{ value }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="block font-medium">Class Level</label>
+      <select name="class_level" hx-get="{% url 'load_invoice_form_options' %}" hx-target="#dependent-fields" hx-include="[name='term']" class="w-full p-2 border rounded">
+        {% for value, label in form.class_level.field.choices %}
+          <option value="{{ value }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div id="dependent-fields">
+      {% include 'forms/partial_form_fields.html' %}
+    </div>
+
+    <div>
+        {{ form.due_date.label_tag }} {{ form.due_date }}
+    </div>
+    <div>
+        <label class="block font-medium">Total Amount</label>
+        <input type="text" name="total_amount" readonly class="w-full p-2 border rounded bg-gray-100">
+      </div>
+      
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Create Invoices</button>
+  </form>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+<script>
+    // Ensures CSRF for HTMX
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const feeSelect = document.getElementById("fee-structures");
+        const totalInput = document.querySelector('input[name="total_amount"]');
+    
+        if (feeSelect && totalInput) {
+            feeSelect.addEventListener("change", function () {
+                const selected = Array.from(feeSelect.selectedOptions);
+                const total = selected.reduce((sum, opt) => {
+                    const amount = parseFloat(opt.dataset.amount || 0);
+                    return sum + (isNaN(amount) ? 0 : amount);
+                }, 0);
+                totalInput.value = total.toFixed(2);
+            });
+        }
+    });
+    </script>
+
+</body>
+
+</html>

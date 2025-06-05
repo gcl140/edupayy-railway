@@ -1,0 +1,31 @@
+<div>
+    <label class="block font-medium">Students</label>
+    <label>
+      <input type="checkbox" name="all_fitting_students">
+      All Fitting Students
+    </label>
+    
+    <select name="students" multiple class="w-full p-2 border rounded">
+      {% for student in students %}
+        <option value="{{ student.id }}">{{ student }}</option>
+      {% endfor %}
+    </select>
+    
+    <!-- <select name="students" multiple class="w-full p-2 border rounded">
+      <option value="__all__">All Fitting Students</option>
+      {% for student in students %}
+        <option value="{{ student.id }}">{{ student }}</option>
+      {% endfor %}
+    </select> -->
+  </div>
+  
+  <div>
+    <label class="block font-medium">Fee Structures</label>
+    <select name="fee_structures" multiple class="w-full p-2 border rounded" id="fee-structures">
+      {% for fee in fee_structures %}
+        <option value="{{ fee.id }}" data-amount="{{ fee.amount }}">{{ fee }}</option>
+      {% endfor %}
+    </select>
+          
+  </div>
+  

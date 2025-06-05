@@ -1,0 +1,87 @@
+{% extends 'yuzzaz/besi.html' %}
+{% load humanize %}
+{% block content %}
+<main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100">
+
+    <style>
+        body{
+            font-family: inherit !important;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+        }
+        .checkmark-circle {
+            animation: checkmark-circle-anim 0.6s ease-in-out;
+        }
+        .checkmark {
+            animation: checkmark-anim 0.5s ease-in-out 0.4s both;
+        }
+        @keyframes checkmark-circle-anim {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes checkmark-anim {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden text-center">
+            <!-- Header -->
+            <div class="gradient-bg p-6">
+                <div class="flex justify-center items-center space-x-2">
+                    <i class="fas fa-graduation-cap text-yellow-400 text-2xl"></i>
+                    <span class="text-xl font-bold text-white">EduPAYY</span>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-8">
+                <div class="relative w-24 h-24 mx-auto mb-6">
+                    <svg class="checkmark-circle w-full h-full text-green-500" viewBox="0 0 52 52">
+                        <circle cx="26" cy="26" r="25" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <svg class="checkmark absolute top-0 left-0 w-full h-full text-green-500" viewBox="0 0 52 52">
+                        <path fill="none" stroke="currentColor" stroke-width="4" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+                
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Payment Successful!</h1>
+                <p class="text-gray-600 mb-6">
+                    Your payment of 
+                <span class="font-semibold">TZS {{ amount|intcomma }}</span> 
+                (approx. <span class="font-semibold">${{ amount_usd|floatformat:2 }}</span> USD)
+                has been processed successfully.
+
+                </p>
+                
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-500">ID:</span>
+                        <span class="font-medium">{{ transaction_id }}</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-500">Date:</span>
+                        <span class="font-medium">{{ payment_date|date:"F d, Y H:i" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Payment Method:</span>
+                        <span class="font-medium">{{ payment_method }}</span>
+                    </div>
+                </div>
+                            
+            <!-- Footer -->
+            <div class="bg-gray-100 p-4 text-center text-sm text-gray-600">
+                <p>Need help? <a href="mailto:gftinity01@gmail.com" class="text-yellow-600 hover:underline">Contact support</a></p>
+            </div>          
+            <!-- Footer -->
+            <div class="bg-gray-100 p-4 text-center text-sm text-gray-600">
+                <p>Go to <a href="{% url 'payments_history' %}" class="text-yellow-600 hover:underline">My Payments</a></p>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

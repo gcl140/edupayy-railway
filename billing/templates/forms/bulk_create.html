@@ -1,0 +1,186 @@
+{% extends 'yuzzaz/besi.html' %}
+{% load widget_tweaks %}
+{% block title %} Bulk Invoices {% endblock %}
+{% block content %}
+<main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Header Section -->
+            <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Create Bulk Invoices</h1>
+                        <p class="text-blue-100">Generate multiple invoices at once for selected students</p>
+                    </div>
+                    <div class="bg-white/20 p-2 rounded-lg text-gray-700">
+                        <a href="{% url 'create_invoice' %}">
+                            <i class="fas fa-file-invoice text-white text-xl mr-2"></i> Create specific
+                        </a>
+                            
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Section -->
+            <form method="post" class="space-y-6 p-6">
+                {% csrf_token %}
+                
+                <!-- Term and Class Level -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Term <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <select name="term" hx-get="{% url 'load_invoice_form_options' %}" 
+                                    hx-target="#dependent-fields" hx-include="[name='class_level']"
+                                    class="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 appearance-none">
+                                {% for value, label in form.term.field.choices %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <i class="fas fa-chevron-down text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Class Level <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <select name="class_level" hx-get="{% url 'load_invoice_form_options' %}" 
+                                    hx-target="#dependent-fields" hx-include="[name='term']"
+                                    class="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 appearance-none">
+                                {% for value, label in form.class_level.field.choices %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <i class="fas fa-chevron-down text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dependent Fields -->
+                <div id="dependent-fields" class="space-y-6">
+                    {% include 'forms/partial_form_fields.html' %}
+                </div>
+                
+                <!-- Due Date -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                        Due Date <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        {{ form.due_date|add_class:"w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700" }}
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-calendar-alt text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total Amount -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                        Total Amount
+                    </label>
+                    <div class="relative">
+                        <input type="text" name="total_amount" readonly id="total-amount"
+                               class="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 font-medium">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <span class="text-gray-500">TZS</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+                    <a href="{% url 'staff_dashboard' %}" 
+                       class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200 flex items-center justify-center">
+                        <i class="fas fa-times-circle mr-2"></i> Cancel
+                    </a>
+                    <button type="submit" 
+                            class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 shadow-sm transition duration-200 flex items-center justify-center">
+                        <i class="fas fa-file-invoice mr-2"></i> Generate Invoices
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<style>
+    /* Custom styles for select multiple and date inputs */
+    select[multiple] {
+        min-height: 120px;
+        background-image: none;
+        padding-right: 0.75rem;
+    }
+    
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    input[type="date"]:not(.has-value):before {
+        content: attr(placeholder);
+        color: #9CA3AF;
+        width: 100%;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        initFeeStructureListener();
+    });
+    
+    // Re-initialize fee structure listener after HTMX content load
+    document.body.addEventListener('htmx:afterSwap', function (evt) {
+        if (evt.target.id === 'dependent-fields') {
+            initFeeStructureListener();
+        }
+    });
+    
+    // Attach listener to #fee-structures and update #total-amount
+    function initFeeStructureListener() {
+        const feeSelect = document.getElementById('fee-structures');
+        const totalInput = document.getElementById('total-amount');
+    
+        console.log("Initializing fee structure listener...");
+        console.log("feeSelect:", feeSelect);
+        console.log("totalInput:", totalInput);
+    
+        if (feeSelect && totalInput) {
+            feeSelect.addEventListener("change", function () {
+                const selected = Array.from(feeSelect.selectedOptions);
+                console.log("Selected options:", selected);
+    
+                const total = selected.reduce((sum, opt) => {
+                    const rawAmount = opt.dataset.amount;
+                    const amount = parseFloat(rawAmount || 0);
+                    console.log(`Option: ${opt.text}, Amount: ${rawAmount}, Parsed: ${amount}`);
+                    return sum + (isNaN(amount) ? 0 : amount);
+                }, 0);
+    
+                totalInput.value = total.toFixed(2);
+                console.log("Updated total amount:", totalInput.value);
+            });
+        } else {
+            console.warn("Could not find #fee-structures or #total-amount.");
+        }
+    }
+    
+    // HTMX CSRF setup
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+    </script>
+    
+{% endblock %}
