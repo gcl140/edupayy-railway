@@ -26,7 +26,13 @@ DEBUG = config('DEBUG', cast=bool)
 
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['your-app-name.onrender.com']
+# ALLOWED_HOSTS = ['your-app-name.onrender.com']
+ALLOWED_HOSTS = [
+    'edupayy-railway.onrender.com',
+    '127.0.0.1',
+    'localhost',
+]
+
 
 # Application definition
 
