@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EduPAYY</title>
+  <title>EduPay - Smart School Payment Management</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -19,39 +19,44 @@
               light: '#1d3e7a',
             },
             secondary: {
-              dark: '#d4a017',
-              DEFAULT: '#e9b949',
-              light: '#f8d77e',
+              dark: '#0066ff',
+              DEFAULT: '#3b82f6',
+              light: '#93c5fd',
+            },
+            accent: {
+              dark: '#059669',
+              DEFAULT: '#10b981',
+              light: '#6ee7b7',
             },
           },
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Inter', 'sans-serif'],
-          },
-        }
+                'sans': ['Funnel Display', 'sans-serif'],
+                'display': ['Funnel Display', 'sans-serif'],
+              }
+            }
       }
     }
   </script>
   
   <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Poppins:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="shortcut icon" href="{% static 'images/png.jpg' %}" type="image/x-icon">
   
   <style>
     .gradient-text {
-      background: linear-gradient(90deg, #e9b949 0%, #f8d77e 100%);
+      background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     .card-hover-effect {
       transition: all 0.3s ease;
-      transform-style: preserve-3d;
     }
     .card-hover-effect:hover {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     }
     .glass-effect {
       background: rgba(255, 255, 255, 0.08);
@@ -59,25 +64,40 @@
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .hero-video {
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0));
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .payment-method {
+      filter: grayscale(100%);
+      opacity: 0.7;
+      transition: all 0.3s ease;
+    }
+    .payment-method:hover {
+      filter: grayscale(0);
+      opacity: 1;
     }
   </style>
 </head>
-<body class="bg-primary-dark text-white font-sans min-h-screen flex flex-col">
-    {% if portal_open %}
+<body class="bg-white text-gray-800 font-sans min-h-screen flex flex-col">
   <!-- NAVBAR -->
-  <nav class="w-full py-4 px-6 glass-effect fixed top-0 z-50">
+  <nav class="w-full py-4 px-6 bg-white shadow-sm fixed top-0 z-50">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <a href="{% url 'homepage' %}" class="flex items-center space-x-2">
-        <img src="{% static 'images/png.jpg' %}" alt="EduPAYY Logo" class="w-10 h-10">
-        <span class="text-2xl font-display font-bold gradient-text">EduPAYY</span>
+        <img src="{% static 'images/png.jpg' %}" alt="EduPay Logo" class="w-10 h-10">
+        <span class="text-2xl font-bold text-primary-dark">Edu<span class="gradient-text">Pay</span></span>
       </a>
 
       <div class="hidden md:flex items-center space-x-8">
-        <a href="https://beta.EduPAYY.or.tz" class="hover:text-secondary-light transition-colors">About</a>
-        <a href="https://beta.EduPAYY.or.tz/contact" class="hover:text-secondary-light transition-colors">Contact</a>
-        <a href="{% url 'login' %}" class="bg-secondary-dark hover:bg-secondary-light text-primary-dark font-bold px-6 py-2 rounded-full transition-all transform hover:scale-105">
+        <a href="#features" class="hover:text-secondary-dark transition-colors">Features</a>
+        <a href="#solutions" class="hover:text-secondary-dark transition-colors">Solutions</a>
+        <a href="#integrations" class="hover:text-secondary-dark transition-colors">Integrations</a>
+        <a href="#solutions" class="bg-secondary-dark hover:bg-secondary-default text-white font-bold px-6 py-2 rounded-full transition-all">
           Login
         </a>
       </div>
@@ -88,11 +108,12 @@
     </div>
     
     <!-- Mobile Menu -->
-    <div class="md:hidden hidden absolute top-full left-0 w-full bg-primary-dark py-4 px-6 shadow-xl" id="mobileMenu">
+    <div class="md:hidden hidden absolute top-full left-0 w-full bg-white py-4 px-6 shadow-xl" id="mobileMenu">
       <div class="flex flex-col space-y-4">
-        <a href="https://beta.EduPAYY.or.tz" class="hover:text-secondary-light transition-colors">About</a>
-        <a href="https://beta.EduPAYY.or.tz/contact" class="hover:text-secondary-light transition-colors">Contact</a>
-        <a href="{% url 'login' %}" class="bg-secondary-dark hover:bg-secondary-light text-primary-dark font-bold px-6 py-2 rounded-full text-center transition-all">
+        <a href="#features" class="hover:text-secondary-dark transition-colors">Features</a>
+        <a href="#solutions" class="hover:text-secondary-dark transition-colors">Solutions</a>
+        <a href="#integrations" class="hover:text-secondary-dark transition-colors">Integrations</a>
+        <a href="#solutions" class="bg-secondary-dark hover:bg-secondary-default text-white font-bold px-6 py-2 rounded-full text-center transition-all">
           Login
         </a>
       </div>
@@ -100,180 +121,328 @@
   </nav>
 
   <!-- HERO SECTION -->
-  <div class="relative flex-grow pt-24">
-    <div class="absolute inset-0 overflow-hidden">
-      <img src="{% static 'assets/videos/hello.jpg' %}" alt="EduPAYY Students" class="w-full h-full object-cover hero-video">
-      <div class="absolute inset-0 bg-gradient-to-b from-primary-dark/80 to-primary-dark"></div>
-    </div>
-    
-    <div class="relative z-10 container mx-auto px-6 py-12">
-      <div class="max-w-4xl mx-auto text-center mb-12">
-        <!-- Info Alerts -->
-        <div class="space-y-3 mb-8">
-        
-<!-- Info 3: Deadline warning with countdown -->
-<div class="bg-primary-light/20 border-l-4 border-red-500 p-4 text-left rounded-r-lg mb-4">
-  <div class="flex items-start">
-    <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
-    <p class="text-sm">
-      The deadline for early consideration is approaching: <strong>May 30</strong>.
-      <span id="countdown" class="font-semibold text-red-600 ml-1"></span>
-    </p>
-  </div>
-</div>
-
-          <div class="bg-primary-light/20 border-l-4 border-secondary-light p-4 text-left rounded-r-lg">
-            <div class="flex items-start">
-              <i class="fas fa-circle-info text-secondary-light mt-1 mr-3"></i>
-              <p class="text-sm">You are about to log in or create a EduPAYY account.
-If registering for a new account, carefully select the portal for the program you wish to join, as this cannot be changed later.
-For example, to apply for an internship, register under "Apply as an parent" to create an parent applicant account (you won't be able to switch to a senior cohort applicant account later).
-If you already have an account, logging in will take you directly to the saved progress of the application type you initially registered for.              </p>
-            </div>
-          </div>
-          
-
-<!-- Info 2: Account creation instructions -->
-<div class="bg-primary-light/20 border-l-4 border-secondary-light p-4 text-left rounded-r-lg mb-4">
-  <div class="flex items-start">
-    <i class="fas fa-circle-info text-secondary-light mt-1 mr-3"></i>
-    <p class="text-sm">
-      When creating an account, first choose your application type (Parent or Senior Cohort), then enter your credentials. Ensure your email is valid, accessible, and active. A confirmation code will be sent to it, and click the "Activate Account" link in that email to complete registration. You can then log in using the email and password you registered with.
-    </p>
-  </div>
-</div>
-
-<!-- Info 1: Parent note -->
-<div class="bg-primary-light/20 border-l-4 border-secondary-light p-4 text-left rounded-r-lg mb-4">
-  <div class="flex items-start">
-    <i class="fas fa-circle-info text-secondary-light mt-1 mr-3"></i>
-    <p class="text-sm">
-      Parents are also members of the senior cohort program, with the added responsibility of supporting office operations.
-    </p>
-  </div>
-</div>
-<!-- Countdown script -->
-<script>
-  const deadline = new Date("2025-05-30T23:59:59").getTime();
-  const countdownElem = document.getElementById("countdown");
-
-  const interval = setInterval(() => {
-    const now = new Date().getTime();
-    const distance = deadline - now;
-
-    if (distance < 0) {
-      clearInterval(interval);
-      countdownElem.innerText = "Deadline passed.";
-      return;
-    }
-
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    
-    countdownElem.innerText = `(${days}d ${hours}h ${minutes}m left)`;
-  }, 1000);
-</script>
-
-
-          <!--<div class="bg-primary-light/20 border-l-4 border-secondary-light p-4 text-left rounded-r-lg">-->
-          <!--  <div class="flex items-start">-->
-          <!--    <i class="fas fa-circle-info text-secondary-light mt-1 mr-3"></i>-->
-          <!--    <p class="text-sm">-->
-          <!--                          If you or your parents would like to know more about the EduPAYY Senior Cohort program, please register for the information sessions here. These information sessions will be conducted in mid-May.</p>-->
-          <!--  </div>-->
-          <!--</div>-->
-        </div>
-        
-        <h1 class="text-5xl md:text-6xl font-display font-bold mb-6">
-          <span class="gradient-text">Your Future</span> Starts Here
+  <section class="relative pt-32 pb-20 px-6 bg-gradient-to-b from-primary-dark to-primary-default text-white">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+          Smart School Payment <span class="gradient-text">Management</span> System
         </h1>
-        <p class="text-xl text-gray-300 mb-12">Join Tanzania's most transformative educational leadership program</p>
+        <p class="text-xl text-gray-300 mb-8">
+          Streamline tuition fee collection, track payments in real-time, and integrate with mobile money and banking APIs. 
+          EduPay empowers schools, parents, and students with secure, transparent financial workflows.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="{% url 'login' 'student' %}" class="bg-accent-default hover:bg-accent-dark text-white font-bold px-8 py-3 rounded-lg transition-all transform hover:scale-105">
+            Get Started for Schools
+          </a>
+          <a href="{% url 'login' 'parent' %}" class="bg-white hover:bg-gray-100 text-primary-dark font-bold px-8 py-3 rounded-lg transition-all transform hover:scale-105">
+            Parent Portal
+          </a>
+        </div>
       </div>
-
-      <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        <!-- Parent Card -->
-        <div class="bg-gradient-to-br from-primary-dark to-primary-light rounded-2xl p-0.5 card-hover-effect">
-          <div class="bg-primary-dark rounded-2xl p-8 h-full">
-            <div class="flex flex-col items-center h-full">
-              <div class="w-20 h-20 rounded-full bg-secondary-dark/20 flex items-center justify-center mb-6">
-                <i class="fas fa-briefcase text-3xl text-secondary-light"></i>
-              </div>
-              <h3 class="text-2xl font-display font-bold mb-3">Apply as an Parent</h3>
-              <p class="text-gray-300 mb-6 text-center">Ready to learn, lead, and level up? Step into impact as a EduPAYY Parent!</p>
-              <div class="mt-auto w-full space-y-3">
-                <a href="{% url 'login' %}" class="block w-full bg-secondary-dark hover:bg-secondary-light text-primary-dark font-bold py-3 px-6 rounded-full text-center transition-all transform hover:scale-[1.02]">
-                  Login
-                </a>
-                <a href="{% url 'register' 'parent' %}" class="block w-full border-2 border-secondary-light hover:bg-secondary-light/10 text-secondary-light font-bold py-3 px-6 rounded-full text-center transition-all transform hover:scale-[1.02]">
-                  Register
-                </a>
-              </div>
+      <div class="relative">
+        <img src="{% static 'images/png.jpg' %}" alt="EduPay Dashboard Preview" class="rounded-xl shadow-2xl border-8 border-white/20">
+        <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-lg shadow-lg">
+          <div class="flex items-center">
+            <div class="bg-green-100 p-2 rounded-full mr-3">
+              <i class="fas fa-check-circle text-green-600"></i>
             </div>
+            <span class="font-bold text-gray-800">Payment Successful!</span>
           </div>
         </div>
-
-        <!-- Senior Cohort Card -->
-        <div class="bg-gradient-to-br from-primary-dark to-primary-light rounded-2xl p-0.5 card-hover-effect">
-          <div class="bg-primary-dark rounded-2xl p-8 h-full">
-            <div class="flex flex-col items-center h-full">
-              <div class="w-20 h-20 rounded-full bg-secondary-dark/20 flex items-center justify-center mb-6">
-                <i class="fas fa-users text-3xl text-secondary-light"></i>
-              </div>
-              <h3 class="text-2xl font-display font-bold mb-3">Apply as a Senior Cohort Member</h3>
-              <p class="text-gray-300 mb-6 text-center">Become part of a learning community as you grow your skills.</p>
-              <div class="mt-auto w-full space-y-3">
-                <a href="{% url 'login' %}" class="block w-full bg-secondary-dark hover:bg-secondary-light text-primary-dark font-bold py-3 px-6 rounded-full text-center transition-all transform hover:scale-[1.02]">
-                  Login
-                </a>
-                <a href="{% url 'register' 'student' %}" class="block w-full border-2 border-secondary-light hover:bg-secondary-light/10 text-secondary-light font-bold py-3 px-6 rounded-full text-center transition-all transform hover:scale-[1.02]">
-                  Register
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> 
-      <br>
-      <br>
-      <center>
-      <small style="text-align: center;">
-      Made with 💚 by <a target="_blank" style="color: grey;" rel="noopener noreferrer" href="https://www.instagram.com/p/DD2M_0QqbRk/?igsh=MWJhOXBrbXR0cWFlYQ==">GCL</a>
-      </small>
-      </center>
+      </div>
     </div>
-  </div> 
-  
+  </section>
 
-  <!-- TOAST MESSAGES -->
-  {% if messages %}
-    <div class="fixed top-6 right-6 space-y-3 z-50">
-      {% for message in messages %}
-        <div class="relative glass-effect rounded-lg overflow-hidden min-w-80 max-w-sm">
-          <div class="p-4 flex items-start">
-            <div class="flex-shrink-0">
-              {% if message.tags == 'success' %}
-                <i class="fas fa-check-circle text-green-400 text-xl mr-3"></i>
-              {% elif message.tags == 'error' %}
-                <i class="fas fa-exclamation-circle text-red-400 text-xl mr-3"></i>
-              {% elif message.tags == 'warning' %}
-                <i class="fas fa-exclamation-triangle text-yellow-400 text-xl mr-3"></i>
-              {% else %}
-                <i class="fas fa-info-circle text-blue-400 text-xl mr-3"></i>
-              {% endif %}
-            </div>
-            <div class="flex-grow">
-              <p class="text-sm">{{ message }}</p>
-            </div>
-            <button type="button" class="ml-4 text-gray-400 hover:text-white" onclick="this.parentElement.parentElement.remove()">
-              <i class="fas fa-times"></i>
-            </button>
+  <!-- FEATURES SECTION -->
+  <section id="features" class="py-20 px-6 bg-gray-50">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Core Features</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Everything you need to modernize school payment management
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover-effect">
+          <div class="feature-icon bg-blue-100 text-blue-600">
+            <i class="fas fa-file-invoice-dollar text-2xl"></i>
           </div>
-          <div class="h-1 w-full bg-gradient-to-r from-secondary-dark to-secondary-light"></div>
+          <h3 class="text-xl font-bold mb-3">Automated Invoicing</h3>
+          <p class="text-gray-600">
+            Generate and send invoices automatically based on class, term, or individual student requirements.
+          </p>
         </div>
-      {% endfor %}
+        
+        <!-- Feature 2 -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover-effect">
+          <div class="feature-icon bg-green-100 text-green-600">
+            <i class="fas fa-tachometer-alt text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Real-time Dashboard</h3>
+          <p class="text-gray-600">
+            Monitor payment statuses, outstanding balances, and financial reports in real-time.
+          </p>
+        </div>
+        
+        <!-- Feature 3 -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover-effect">
+          <div class="feature-icon bg-purple-100 text-purple-600">
+            <i class="fas fa-mobile-alt text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Mobile Money Integration</h3>
+          <p class="text-gray-600">
+            Seamless integration with popular mobile money platforms for convenient payments.
+          </p>
+        </div>
+        
+        <!-- Feature 4 -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover-effect">
+          <div class="feature-icon bg-yellow-100 text-yellow-600">
+            <i class="fas fa-bell text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Payment Reminders</h3>
+          <p class="text-gray-600">
+            Automated notifications for due and overdue payments via email and SMS.
+          </p>
+        </div>
+        
+        <!-- Feature 5 -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover-effect">
+          <div class="feature-icon bg-red-100 text-red-600">
+            <i class="fas fa-shield-alt text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Secure Transactions</h3>
+          <p class="text-gray-600">
+            Bank-level security for all transactions with encrypted data protection.
+          </p>
+        </div>
+        
+        <!-- Feature 6 -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover-effect">
+          <div class="feature-icon bg-indigo-100 text-indigo-600">
+            <i class="fas fa-users text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Role-Based Access</h3>
+          <p class="text-gray-600">
+            Custom dashboards for administrators, accountants, parents, and students.
+          </p>
+        </div>
+      </div>
     </div>
-  {% endif %}
+  </section>
+
+  <!-- SOLUTIONS SECTION -->
+  <section id="solutions" class="py-20 px-6 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Tailored Solutions</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Designed for every stakeholder in the education ecosystem
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- For Schools -->
+        <div class="bg-gradient-to-b from-primary-light to-primary-dark rounded-xl overflow-hidden shadow-lg">
+          <div class="p-8 text-white">
+            <div class="w-16 h-16 rounded-lg bg-white/20 flex items-center justify-center mb-6">
+              <i class="fas fa-school text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">For Schools</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-accent-light"></i>
+                <span>Streamlined fee collection</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-accent-light"></i>
+                <span>Financial reporting</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-accent-light"></i>
+                <span>Automated reconciliation</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-accent-light"></i>
+                <span>Student account management</span>
+              </li>
+            </ul>
+          </div>
+          <div class="bg-white/10 p-4 text-center">
+            <a href="{% url 'login' 'student' %}" class="inline-block bg-white text-primary-dark font-bold px-6 py-2 rounded-lg hover:bg-gray-100 transition-all">
+              Learn More
+            </a>
+          </div>
+        </div>
+        
+        <!-- For Parents -->
+        <div class="bg-gradient-to-b from-secondary-light to-secondary-dark rounded-xl overflow-hidden shadow-lg">
+          <div class="p-8 text-white">
+            <div class="w-16 h-16 rounded-lg bg-white/20 flex items-center justify-center mb-6">
+              <i class="fas fa-user-friends text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">For Parents</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-accent-light"></i>
+                <span>Multiple payment options</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-accent-light"></i>
+                <span>Payment history</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-accent-light"></i>
+                <span>Automated reminders</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-accent-light"></i>
+                <span>Receipt generation</span>
+              </li>
+            </ul>
+          </div>
+          <div class="bg-white/10 p-4 text-center">
+            <a href="{% url 'login' 'parent' %}" class="inline-block bg-white text-secondary-dark font-bold px-6 py-2 rounded-lg hover:bg-gray-100 transition-all">
+              Learn More
+            </a>
+          </div>
+        </div>
+        
+        <!-- For Students -->
+        <div class="bg-gradient-to-b from-accent-light to-accent-dark rounded-xl overflow-hidden shadow-lg">
+          <div class="p-8 text-white">
+            <div class="w-16 h-16 rounded-lg bg-white/20 flex items-center justify-center mb-6">
+              <i class="fas fa-user-graduate text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">For Students</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-secondary-light"></i>
+                <span>Fee structure visibility</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-secondary-light"></i>
+                <span>Payment status tracking</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-secondary-light"></i>
+                <span>Receipt access</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle mt-1 mr-2 text-secondary-light"></i>
+                <span>Payment deadline alerts</span>
+              </li>
+            </ul>
+          </div>
+          <div class="bg-white/10 p-4 text-center">
+            <a href="{% url 'login' 'student' %}" class="inline-block bg-white text-accent-dark font-bold px-6 py-2 rounded-lg hover:bg-gray-100 transition-all">
+              Learn More
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTEGRATIONS SECTION -->
+  <section id="integrations" class="py-20 px-6 bg-gray-50">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Payment Integrations</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Connect with the payment methods your community already uses
+        </p>
+      </div>
+      
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 md:flex md:justify-center">
+          <div class="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center payment-method">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png" alt="Stripe" class="h-8">
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center payment-method">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/2560px-PayPal.svg.png" alt="PayPal" class="h-8">
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center payment-method">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png?20191120100524" alt="M-Pesa" class="h-8">
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center payment-method">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Bharti_Airtel_Logo.svg/250px-Bharti_Airtel_Logo.svg.png" alt="Airtel Money" class="h-8">
+          </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="py-16 px-6 bg-primary-dark text-white">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your School's Payment System?</h2>
+      <p class="text-xl text-gray-300 mb-8">
+        Join hundreds of schools already using EduPay to simplify their financial operations.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="{% url 'login' 'student' %}" class="bg-accent-default hover:bg-accent-dark text-white font-bold px-8 py-3 rounded-lg transition-all">
+          Get Started for Schools
+        </a>
+        <a href="{% url 'homepage' %}" class="bg-white/10 hover:bg-white/20 text-white font-bold px-8 py-3 rounded-lg transition-all">
+          Contact Sales
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-12 px-6">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center space-x-2 mb-4">
+          <img src="{% static 'images/png.jpg' %}" alt="EduPay Logo" class="w-8 h-8">
+          <span class="text-xl font-bold">Edu<span class="gradient-text">Pay</span></span>
+        </div>
+        <p class="text-gray-400">
+          Modern fintech-powered school payment solution that streamlines tuition fee collection and financial management.
+        </p>
+      </div>
+      
+      <div>
+        <h4 class="text-lg font-bold mb-4">Product</h4>
+        <ul class="space-y-2">
+          <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+          <li><a href="#solutions" class="text-gray-400 hover:text-white transition-colors">Solutions</a></li>
+          <li><a href="#integrations" class="text-gray-400 hover:text-white transition-colors">Integrations</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="text-lg font-bold mb-4">Company</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="text-lg font-bold mb-4">Connect</h4>
+        <div class="flex space-x-4 mb-4">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-twitter text-xl"></i></a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-facebook text-xl"></i></a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-linkedin text-xl"></i></a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-instagram text-xl"></i></a>
+        </div>
+        <p class="text-gray-400">
+          <i class="fas fa-envelope mr-2"></i> support@edupay.com
+        </p>
+      </div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto pt-8 mt-8 border-t border-gray-800 text-center text-gray-400 text-sm">
+      <p>© 2023 EduPay. All rights reserved.</p>
+    </div>
+  </footer>
 
   <!-- SCRIPTS -->
   <script>
@@ -291,25 +460,16 @@ If you already have an account, logging in will take you directly to the saved p
         mobileMenu.classList.add('hidden');
       }
     });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
   </script>
-
-{% else %}
-  <!-- Portal Closed State -->
-  <div class="flex-grow flex items-center justify-center bg-gradient-to-br from-primary-dark to-primary-light p-6">
-    <div class="text-center max-w-2xl bg-primary-dark/90 backdrop-blur-sm rounded-2xl p-12 shadow-2xl border border-white/10">
-      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-secondary-dark/20 mb-6">
-        <i class="fas fa-clock text-3xl text-secondary-light"></i>
-      </div>
-      <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 gradient-text">Portal Not Yet Open</h1>
-      <p class="text-xl text-gray-300 mb-6">
-        Applications are currently <strong class="text-secondary-light">NOT</strong> open. We recommend checking back frequently for the latest updates.
-      </p>
-      <div class="animate-pulse text-secondary-light">
-        <i class="fas fa-arrow-down mr-2"></i> Stay tuned for updates
-      </div>
-    </div>
-  </div>
-{% endif %}
-
 </body>
 </html>

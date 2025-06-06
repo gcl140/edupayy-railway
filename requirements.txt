@@ -12,7 +12,9 @@ click-plugins==1.1.1
 click-repl==0.3.0
 crispy-bootstrap5==2024.10
 cron-descriptor==1.4.5
+cryptography==45.0.3
 cssselect2==0.8.0
+defusedxml==0.7.1
 dj-database-url==3.0.0
 Django==4.2.20
 django-browser-reload==1.18.0
@@ -31,6 +33,7 @@ html5lib==1.1
 humanize==4.12.3
 idna==3.10
 kombu==5.5.3
+oauthlib==3.2.2
 openpyxl==3.1.5
 packaging==25.0
 phonenumbers==8.13.54
@@ -40,14 +43,19 @@ prompt_toolkit==3.0.51
 psycopg2-binary==2.9.10
 pycparser==2.22
 pydyf==0.11.0
+PyJWT==2.10.1
 pyphen==0.17.2
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 python-decouple==3.8
+python3-openid==3.2.0
 pytz==2025.2
 redis==6.2.0
 requests==2.32.3
+requests-oauthlib==2.0.0
 six==1.17.0
+social-auth-app-django==5.4.3
+social-auth-core==4.6.1
 sqlparse==0.5.3
 stripe==12.1.0
 tinycss2==1.4.0

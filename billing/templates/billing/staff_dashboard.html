@@ -10,11 +10,16 @@
                 <h2 class="text-2xl font-bold mb-2">Welcome back, {{user.first_name}}!</h2>
                 <p class="text-blue-100">Here's what's happening with your student payments today.</p>
             </div>
-            <button
+            {% if user.is_parent %}
+
+            <a href="{% url 'invoices' %}">
+                <button
                 class="mt-4 md:mt-0 bg-yellow-500 hover:bg-yellow-600 text-darkblue-900 font-medium py-2 px-4 rounded-lg transition flex items-center space-x-2">
                 <i class="fas fa-plus"></i>
                 <span>Make Payment</span>
             </button>
+        </a>
+            {% endif %}
         </div>
     </div>
 
@@ -355,8 +360,8 @@
                         <!-- <p class="text-sm text-gray-500">{{ student.admission_number }}</p> -->
                         <p class="text-xs text-gray-500"><strong>Class level</strong>: {{ student.class_level }}</p>
                         <div class="mt-1 flex items-center text-sm">
-                            <!-- <span class="text-gray-500">Balance:</span> -->
-                            <!-- <span class="ml-2 font-medium text-red-500">{{ student.balance }}</span>  placeholder -->
+                            <span class="text-gray-500">Balance:</span>
+                            <span class="ml-2 font-medium text-red-500">{{ student.balance }}</span>  placeholder
                         </div>
                     </div>
                 </div>

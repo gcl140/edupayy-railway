@@ -77,7 +77,7 @@ class StudentProfileForm(forms.ModelForm):
 
     class Meta:
         model = StudentProfile
-        fields = ['user', 'parent', 'class_level']
+        fields = ['user', 'parent', 'class_level', 'term']
         widgets = {
             'parent': forms.Select(attrs={
                 'class': 'select-field',
@@ -100,7 +100,19 @@ class ParentContactForm(forms.Form):
         widget=forms.EmailInput(attrs={
             'class': 'w-full mt-1 p-2 border rounded-lg',
             'placeholder': 'parent@example.com'
-        })
+        }),
+        required = True
+    )
+    term = forms.ChoiceField(
+        choices=StudentProfile.TERM_CHOICES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md'})
+    )
+
+    class_level = forms.ChoiceField(
+        choices=StudentProfile.LEVEL_CHOICES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md'})
     )
 
 

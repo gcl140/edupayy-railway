@@ -34,7 +34,8 @@ class StudentProfile(models.Model):
         return total_due
 
     def __str__(self):
-        return f"{self.user.get_full_name()} - {self.parent.get_full_name()} - {self.class_level}"
+        parent_name = self.parent.get_full_name() if self.parent else "No Parent"
+        return f"{self.user.get_full_name()} - {parent_name} - {self.class_level}"
 
 
 

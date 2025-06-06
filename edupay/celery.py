@@ -13,7 +13,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'send-reminders-every-morning': {
         'task': 'billing.tasks.send_invoice_reminders',
-        'schedule': crontab(hour=10, minute=57),  # Every day at 8:00 AM
+        'schedule': crontab(hour=12, minute=3),  # Every day at 8:00 AM
     },
 }
 

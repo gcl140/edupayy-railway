@@ -227,7 +227,7 @@
                                 <div class="relative">
                                     <i class="fas fa-bell text-xl group-hover:animate-tada"></i>
                                     {% if has_unread_notifications %}
-                                    <span class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">
+                                    <span class="notification-badge absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">
                                         <span class="flex h-3 w-3">
                                             <span
                                                 class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
@@ -247,7 +247,7 @@
                                 x-transition:leave="transition ease-in duration-75"
                                 x-transition:leave-start="transform opacity-100 scale-100"
                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                class="absolute md:right-2 -left-60 mt-2 w-72 md:w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200 overflow-scroll max-h-[500px]">
+                                class="absolute md:right-2 -left-40 mt-2 w-72 md:w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200 overflow-scroll max-h-[500px]">
                                 <!-- Header -->
                                 <div class="bg-blue-900 px-4 py-3 flex justify-between items-center">
                                     <h4 class="text-sm font-semibold text-yellow-400 flex items-center">
@@ -334,8 +334,12 @@
                                 const url = evt.detail.xhr.responseURL;
                                 if (url.endsWith('/notifications/mark-all-read/')) {
                                     // Remove notification dot
-                                    const dot = document.querySelector('.notification-dot, .bg-yellow-400');
-                                    if (dot) dot.style.display = 'none';
+                                    // const dot = document.querySelector('.notification-dot, .bg-yellow-400, .notification-badge');
+                                    // if (dot) dot.remove(); 
+                                    document.querySelectorAll('.notification-dot, .bg-yellow-400, .notification-badge')
+                                    .forEach(dot => dot.remove());
+
+                                    // if (dot) dot.style.display = 'none';
 
                                     // Change "Mark all as read" to "Already read"
                                     const markAllLink = document.querySelector('[hx-post*="mark-all-read"]');

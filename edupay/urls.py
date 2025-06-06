@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('yuzzaz.urls')),
     path('billing/', include('billing.urls')),
     path('accounts/login/', RedirectView.as_view(url='/login/', permanent=True)),
+    path('auth/', include('social_django.urls', namespace='social')),
     path('__reload__/', include('django_browser_reload.urls')),
     path('stripe/webhook/', stripe_webhook, name='stripe-webhook'),  # ✅ ADD THIS
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

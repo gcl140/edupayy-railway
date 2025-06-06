@@ -484,6 +484,7 @@
                             <div class="form-group">
                                 {% if field.field.widget.input_type == "checkbox" %}
                                     {% if user_type == "parent" %}
+                                    
                                     <div class="custom-checkbox-group">
                                         <input class="custom-checkbox" type="checkbox" id="{{ field.id_for_label }}" name="{{ field.html_name }}" required>
                                         <label for="{{ field.id_for_label }}" class="custom-label">
@@ -513,13 +514,28 @@
                             </div>
                         {% endfor %}
                         
-                        <button type="submit" class="btn btn-custom mt-4">
-                            <span>Register</span>
-                        </button>
-                        
-                        <div class="form-footer mt-3">
-                            <p>Already have an account? <a href="{% url 'login' %}">Sign In</a></p>
-                        </div>
+
+<button type="submit" class="btn btn-primary w-100 mt-4 py-2">
+    <i class="fas fa-user-plus me-2"></i>Register
+</button>
+
+{% if user_type == "parent" %}
+    <a class="btn btn-outline-danger w-100 mt-3 py-2" href="{% url 'set_user_type_and_login' 'parent' %}">
+        <i class="fab fa-google me-2"></i>Sign up with Google (Parent)
+    </a>
+{% else %}
+    <a class="btn btn-outline-danger w-100 mt-3 py-2" href="{% url 'set_user_type_and_login' 'student' %}">
+        <i class="fab fa-google me-2"></i>Sign up with Google (Student)
+    </a>
+{% endif %}
+
+<div class="form-footer mt-4 text-center">
+    <p class="text-muted">Already have an account? 
+        <a href="{% url 'login' %}" class="text-decoration-none">
+            <i class="fas fa-sign-in-alt ms-1"></i> Sign In
+        </a>
+    </p>
+</div>
                     </form>
                 </div>
             </div>
@@ -569,16 +585,8 @@
             toasts.forEach(toast => {
                 setTimeout(() => {
                     toast.remove();
-                }, 5000);
+                }, 10000);
             });
-            
-            // Mobile menu toggle
-            // const navbarToggler = document.querySelector('.navbar-toggler');
-            // const navbarNav = document.querySelector('#navbarNav');
-            
-            // navbarToggler.addEventListener('click', function() {
-            //     navbarNav.classList.toggle('show');
-            // });
         });
     </script>
 </body>

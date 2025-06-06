@@ -518,28 +518,50 @@
                             {% endif %}
                         </div>
                     
-                        <div class="form-footer text-center mt-2">
-                            <a href="{% url 'password_reset' %}" class="text-blue-500 hover:underline">Forgot password?</a>
+                        <div class="form-footer text-center mt-3">
+                            <a href="{% url 'password_reset' %}" class="text-decoration-none text-primary">
+                                <i class="fas fa-key me-1"></i>Forgot password?
+                            </a>
                         </div>
-                    
-                        <button type="submit" class="btn btn-custom mt-4">
-                            <span>Sign In</span>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mt-4 py-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
                         </button>
-                    
-                        <div class="form-footer mt-3 text-center">
-                            <p>Don't have an account?</p>
-                            <div class="relative inline-block text-left">
-                                <button type="button" class="btn btn-primary dropdown-toggle" id="registerDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Create One
+                        
+                        {% if user_type == "parent" %}
+                            <a class="btn btn-outline-danger w-100 mt-3 py-2" href="{% url 'set_user_type_and_login' 'parent' %}">
+                                <i class="fab fa-google me-2"></i>Sign in with Google (Parent)
+                            </a>
+                        {% elif user_type == "student" %}
+                            <a class="btn btn-outline-danger w-100 mt-3 py-2" href="{% url 'set_user_type_and_login' 'student' %}">
+                                <i class="fab fa-google me-2"></i>Sign in with Google (Student)
+                            </a>
+                        {% else %}
+                            <div class="form-footer mt-3 text-center">
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-primary dropdown-toggle w-100 py-2" type="button" id="registerDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fab fa-google me-2"></i>Sign in with Google for
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="registerDropdown">
+                                        <li><a class="dropdown-item" href="{% url 'set_user_type_and_login' 'student' %}"><i class="fas fa-user-graduate me-2"></i>Student</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'set_user_type_and_login' 'parent' %}"><i class="fas fa-users me-2"></i>Parent</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="form-footer mt-4 text-center">
+                            <p class="text-muted">Don't have an account?</p>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="registerDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-plus me-2"></i>Create One
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="registerDropdown">
-                                    <li><a class="dropdown-item" href="{% url 'register' 'student' %}">Register as a Student</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'register' 'parent' %}">Register as a Parent</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'register' 'student' %}"><i class="fas fa-user-graduate me-2"></i>Register as Student</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'register' 'parent' %}"><i class="fas fa-users me-2"></i>Register as Parent</a></li>
                                 </ul>
                             </div>
-                        </div>
-                    </form>
-                    
+                        </div>                    
                 </div>
             </div>
         </div>
@@ -586,7 +608,7 @@
             toasts.forEach(toast => {
                 setTimeout(() => {
                     toast.remove();
-                }, 5000);
+                }, 10000);
             });
             
             // // Mobile menu toggle

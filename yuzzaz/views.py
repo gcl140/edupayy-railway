@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.http import JsonResponse, HttpResponseForbidden
 from django.utils.timezone import now
 from django.views.decorators.http import require_POST
@@ -96,44 +97,61 @@ def activate(request, uidb64, token):
 
 
 
-def get_application_for_intern(user):
-    application, created = ApplicationIntern.objects.get_or_create(user=user)
-    if created:
-        print("A new Intern pplication instance was created.")
-    else:
-        print("Retrieved an existing Intern Application instance.")
-    return application
+# def login(request):
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
 
-def get_application_for_cohort(user):
-    application, created = ApplicationCohort.objects.get_or_create(user=user)
-    if created:
-        print("A new Cohort pplication instance was created.")
-    else:
-        print("Retrieved an existing Cohort Application instance.")
-    return application
+#         user = User.objects.filter(email=username).first()
+#         if user is not None and user.check_password(password):
+#             auth_login(request, user)
+#             messages.success(request, "You have successfully logged in.")
 
-def login(request):
+#             # Check if the user is an intern or cohort and create their application instance
+#             if user.is_parent:
+#                 return redirect('parents_dashboard')  
+#             elif user.is_staff:
+#                 return redirect('staff_dashboard') 
+#             else:
+#                 return redirect('student_dashboard')  
+
+#         else:
+#             messages.error(request, "Invalid credentials, please try again.")
+
+#     return render(request, 'yuzzaz/login.html')
+
+
+def login(request, user_type=None):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
 
         user = User.objects.filter(email=username).first()
-        if user is not None and user.check_password(password):
+        if user and user.check_password(password):
             auth_login(request, user)
             messages.success(request, "You have successfully logged in.")
 
-            # Check if the user is an intern or cohort and create their application instance
             if user.is_parent:
-                return redirect('parents_dashboard')  
+                return redirect('parents_dashboard')
             elif user.is_staff:
-                return redirect('staff_dashboard') 
+                return redirect('staff_dashboard')
             else:
-                return redirect('student_dashboard')  
-
+                return redirect('student_dashboard')
         else:
             messages.error(request, "Invalid credentials, please try again.")
 
-    return render(request, 'yuzzaz/login.html')
+    return render(request, 'yuzzaz/login.html', {'user_type': user_type})
+
+
+@login_required
+def post_login_redirect(request):
+    user = request.user
+    if user.is_staff:
+        return redirect('staff_dashboard')
+    elif user.is_parent:
+        return redirect('parents_dashboard')
+    else:
+        return redirect('student_dashboard')
 
 
 @login_required
@@ -401,3 +419,7 @@ def send_custom_email(request):
         form = BulkEmailForm()
 
     return render(request, 'emails/send_custom_email.html', {'form': form})
+
+def set_user_type_and_login(request, user_type):
+    request.session['login_user_type'] = user_type
+    return redirect(f"{reverse('social:begin', args=['google-oauth2'])}?next=/post-login/")

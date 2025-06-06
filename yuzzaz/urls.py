@@ -9,7 +9,11 @@ urlpatterns = [
     # path('register/', views.register, name='register'),
     path('homepage/', views.homepage, name='homepage'),
     path('', views.homepage, name='homepage'),
+    # path('login/', views.login, name='login'),
+    path('login/google/<str:user_type>/', views.set_user_type_and_login, name='set_user_type_and_login'),
+
     path('login/', views.login, name='login'),
+    path('login/<str:user_type>/', views.login, name='typed_login'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('logout/', views.logout, name='logout'),
     path('send_custom_email/', views.send_custom_email, name='send_custom_email'),
@@ -23,5 +27,8 @@ urlpatterns = [
     path('activate-user/', views.activate_user_by_email, name='activate_user_by_email'),
     path('notifications/mark-all-read/', views.mark_all_notifications_as_read, name='mark_all_notifications_read'),
     path('notifications/mark-all-read-page/', views.mark_all_notifications_as_read_page, name='mark_all_notifications_as_read_page'),
+
+    path('post-login/', views.post_login_redirect, name='post_login_redirect')
+
 
 ]

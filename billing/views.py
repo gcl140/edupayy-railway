@@ -56,7 +56,25 @@ from .models import (
 from .tables import InvoiceTable
 from yuzzaz.models import Notification, UserNotificationStatus
 
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import MultiInvoiceForm
+from .models import Invoice, InvoiceFee
+from functools import wraps
+from django.shortcuts import render
+from .models import StudentProfile, FeeStructure
+from .forms import InvoiceForm
+
 User = get_user_model()
+def parents_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if request.user.is_authenticated and not request.user.is_parent:
+            return render(request, "yuzzaz/403.html")
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
 
 @login_required
 def download_receipt(request, payment_id):
@@ -409,7 +427,8 @@ def stripe_webhook(request):
 
     return HttpResponse(status=200)
 
-
+@login_required
+@parents_required
 def payment_success(request):
     invoice_id = request.GET.get('invoice_id')
     if not invoice_id:
@@ -434,7 +453,7 @@ def payment_success(request):
 
 
 
-
+@login_required
 def payment_status_check(request):
     invoice_id = request.GET.get('invoice_id')
     if not invoice_id:
@@ -454,6 +473,7 @@ def payment_cancel(request):
 
 
 @login_required
+@staff_member_required
 def staff_dashboard(request):
     staff = request.user
 
@@ -839,6 +859,8 @@ def link_parent_request(request):
         form = ParentContactForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['parent_contact']
+            term = form.cleaned_data['term']
+            class_level = form.cleaned_data['class_level']
             parent = User.objects.filter(is_parent=True, email=email).first()
             if not parent:
                 form.add_error('parent_contact', "No parent account found with that email.")
@@ -850,7 +872,8 @@ def link_parent_request(request):
                         user=request.user,
                         parent_contact=email,
                         admission_number=f"ADM-{request.user.id}",
-                        class_level="Unassigned",  # or pull from a default/form
+                        class_level=class_level,
+                        term=term,
                     )
 
                 req = ParentRequest.objects.create(
@@ -939,6 +962,7 @@ def link_parent_request(request):
 
 
 @login_required
+@parents_required
 def respond_parent_request(request, req_id, action):
     req = get_object_or_404(ParentRequest, id=req_id, parent=request.user)
 
@@ -980,60 +1004,8 @@ def respond_parent_request(request, req_id, action):
 
 
 
-
-
-
-
-
-
-
-
-
-# views.py
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import MultiInvoiceForm
-from .models import Invoice, InvoiceFee
-
-# @login_required
-# def create_bulk_invoices(request):
-#     if request.method == 'POST':
-#         form = MultiInvoiceForm(request.POST)
-#         if form.is_valid():
-#             term = form.cleaned_data['term']
-#             class_level = form.cleaned_data['class_level']
-#             due_date = form.cleaned_data['due_date']
-#             fee_structures = form.cleaned_data['fee_structures']
-#             all_fitting = form.cleaned_data['all_fitting_students']
-
-#             students = (
-#                 StudentProfile.objects.filter(term=term, class_level=class_level)
-#                 if all_fitting else form.cleaned_data['students']
-#             )
-
-#             for student in students:
-#                 invoice = Invoice.objects.create(
-#                     student=student,
-#                     term=term,
-#                     due_date=due_date,
-#                     total_amount=0
-#                 )
-#                 total = 0
-#                 for fee in fee_structures:
-#                     InvoiceFee.objects.create(invoice=invoice, fee_structure=fee)
-#                     total += fee.amount
-#                 invoice.total_amount = total
-#                 invoice.save()
-
-#             messages.success(request, f"Invoices created for {students.count()} students.")
-#             return redirect('invoices')
-#     else:
-#         messages.error(request, "Failed to create invoices.")
-#         form = MultiInvoiceForm()
-#     return render(request, 'forms/bulk_create.html', {'form': form})
-
-
 @login_required
+@staff_member_required
 def create_bulk_invoices(request):
     if request.method == 'POST':
         form = MultiInvoiceForm(request.POST)
@@ -1079,10 +1051,8 @@ def create_bulk_invoices(request):
     return render(request, 'forms/bulk_create.html', {'form': form})
 
 
-from django.shortcuts import render
-from .models import StudentProfile, FeeStructure
-from .forms import InvoiceForm
-
+@login_required
+@staff_member_required
 def load_invoice_form_options(request):
     term = request.GET.get('term')
     class_level = request.GET.get('class_level')
