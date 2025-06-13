@@ -28,7 +28,9 @@ urlpatterns = [
     path('notifications/mark-all-read/', views.mark_all_notifications_as_read, name='mark_all_notifications_read'),
     path('notifications/mark-all-read-page/', views.mark_all_notifications_as_read_page, name='mark_all_notifications_as_read_page'),
 
-    path('post-login/', views.post_login_redirect, name='post_login_redirect')
+    path('post-login/', views.post_login_redirect, name='post_login_redirect'),
+    path('activation-sent/', views.activation_sent, name='activation_sent'),
+    path('resend-activation/', views.resend_activation_email, name='resend_activation_email'),
 
 
 ]

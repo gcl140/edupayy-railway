@@ -1,0 +1,70 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'landing/styles.css' %}">
+<script src="{% static 'landing/scripts.js' %}"></script>
+<img src="{% static 'landing/images/your-image.png' %}" />
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>School Payment Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f5f7fa;
+        }
+        header {
+            background: #2a9d8f;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .hero {
+            padding: 3rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+        .cta {
+            margin-top: 2rem;
+        }
+        .cta a {
+            padding: 1rem 2rem;
+            background: #e76f51;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #264653;
+            color: white;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>School Payment Management System</h1>
+    </header>
+    <div class="hero">
+        <h1>Welcome to Our School's Payment Portal</h1>
+        <p>Simplifying school fee payments for students and parents</p>
+        <div class="cta">
+            <a href="#">Get Started</a>
+        </div>
+    </div>
+    <footer>
+        &copy; 2025 School Payment System
+    </footer>
+</body>
+</html>

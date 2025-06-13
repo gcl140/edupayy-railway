@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.db.models import Q, Sum
 from django.core.mail import EmailMessage
@@ -71,7 +71,10 @@ def register(request, user_type):
             messages.success(
                 request, f"Dear {user.first_name}, we have sent an activation link to your email. Please check your email to complete registration (Remember to check your spam too, you can't proceed without that email)."
             )
-            return redirect('homepage')  # Redirect to login page
+            request.session['inactive_user_email'] = user.email  # Store for resend logic
+            return redirect('activation_sent')
+
+            # return redirect('homepage')  # Redirect to login page
     else:
         form = UserRegistrationForm()
 
@@ -96,38 +99,14 @@ def activate(request, uidb64, token):
         return redirect('homepage')
 
 
-
-# def login(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-
-#         user = User.objects.filter(email=username).first()
-#         if user is not None and user.check_password(password):
-#             auth_login(request, user)
-#             messages.success(request, "You have successfully logged in.")
-
-#             # Check if the user is an intern or cohort and create their application instance
-#             if user.is_parent:
-#                 return redirect('parents_dashboard')  
-#             elif user.is_staff:
-#                 return redirect('staff_dashboard') 
-#             else:
-#                 return redirect('student_dashboard')  
-
-#         else:
-#             messages.error(request, "Invalid credentials, please try again.")
-
-#     return render(request, 'yuzzaz/login.html')
-
-
 def login(request, user_type=None):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
 
-        user = User.objects.filter(email=username).first()
-        if user and user.check_password(password):
+        user = authenticate(request, username=username, password=password)
+
+        if user:
             auth_login(request, user)
             messages.success(request, "You have successfully logged in.")
 
@@ -137,10 +116,24 @@ def login(request, user_type=None):
                 return redirect('staff_dashboard')
             else:
                 return redirect('student_dashboard')
+
         else:
+            # Try to fetch inactive user to provide better feedback
+            try:
+                user_obj = User.objects.get(email=username)
+                if not user_obj.is_active and user_obj.check_password(password):
+                    request.session['inactive_user_email'] = user_obj.email
+                    request.session['email_sent_time'] = datetime.now().isoformat()
+
+                    messages.warning(request, "Your account is not activated. Please check your email or request a new activation link.")
+                    return redirect('activation_sent')
+            except User.DoesNotExist:
+                pass  # Fall through to invalid credentials message
+
             messages.error(request, "Invalid credentials, please try again.")
 
     return render(request, 'yuzzaz/login.html', {'user_type': user_type})
+
 
 
 @login_required
@@ -423,3 +416,62 @@ def send_custom_email(request):
 def set_user_type_and_login(request, user_type):
     request.session['login_user_type'] = user_type
     return redirect(f"{reverse('social:begin', args=['google-oauth2'])}?next=/post-login/")
+
+
+
+
+
+
+
+
+
+from django.utils.timezone import now
+from datetime import timedelta
+
+def activation_sent(request):
+    email = request.session.get('inactive_user_email')
+    if not email:
+        return redirect('register', user_type='parent')  # Or fallback
+
+    # Store the timestamp if not set
+    if not request.session.get('email_sent_time'):
+        request.session['email_sent_time'] = now().isoformat()
+
+    return render(request, 'yuzzaz/activation_sent.html', {
+        'email': email,
+        'can_resend_at': now() + timedelta(seconds=90)
+    })
+
+
+def resend_activation_email(request):
+    email = request.session.get('inactive_user_email')
+    sent_time = request.session.get('email_sent_time')
+
+    if not email or not sent_time:
+        messages.error(request, "Session expired. Please register again.")
+        return redirect('register', user_type='parent')
+
+    if (now() - datetime.fromisoformat(sent_time)).total_seconds() < 90:
+        messages.warning(request, "Please wait before requesting a new email.")
+        return redirect('activation_sent')
+
+    user = User.objects.filter(email=email, is_active=False).first()
+    if user:
+        current_site = get_current_site(request)
+        message = render_to_string("yuzzaz/activate_account.html", {
+            'user': user,
+            'domain': current_site.domain,
+            'protocol': 'https' if request.is_secure() else 'http',
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            'token': account_activation_token.make_token(user),
+            'current_year': datetime.now().year,
+        })
+        email_obj = EmailMessage("Activate your user account", message, to=[user.email])
+        email_obj.content_subtype = "html"
+        email_obj.send()
+
+        request.session['email_sent_time'] = now().isoformat()
+        messages.success(request, "A new activation link has been sent.")
+    else:
+        messages.error(request, "No inactive account found with that email.")
+    return redirect('activation_sent')

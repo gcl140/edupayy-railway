@@ -1,0 +1,38 @@
+{% extends 'yuzzaz/base copy.html' %}
+{% block title %}Activation Email Sent{% endblock %}
+{% block content %}
+<div class="form-header">
+  <h2>Check Your Email</h2>
+  <p>We’ve sent an activation link to <strong>{{ email }}</strong>.</p>
+  <p>
+    Please open this email to activate your account. If you don't see it in your inbox, please remember to also check your <strong>spam or junk folder</strong>.
+  </p>
+  <p>
+    If you still haven't received the email after 90 seconds, you'll be able to resend the activation link by clicking the button below.
+  </p>
+</div>
+
+<form method="post" action="{% url 'resend_activation_email' %}">
+  {% csrf_token %}
+  <button id="resend-btn" disabled class="btn btn-custom mt-4">
+    Please wait <span id="countdown">90</span> seconds...
+  </button>
+</form>
+
+<script>
+  let countdown = 90;
+  const countdownEl = document.getElementById('countdown');
+  const button = document.getElementById('resend-btn');
+
+  const timer = setInterval(() => {
+    countdown--;
+    countdownEl.textContent = countdown;
+    if (countdown <= 0) {
+      clearInterval(timer);
+      button.removeAttribute('disabled');
+      button.textContent = "Resend Activation Email";
+      button.style.backgroundColor = "";
+    }
+  }, 1000);
+</script>
+{% endblock %}

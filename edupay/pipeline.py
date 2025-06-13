@@ -7,24 +7,33 @@ from social_django.models import UserSocialAuth
 from social_core.exceptions import AuthAlreadyAssociated
 from django.urls import reverse
 
+
 def save_user_details(backend, user, response, request=None, *args, **kwargs):
-    if backend.name == 'google-oauth2':
-        is_new = kwargs.get('is_new', False)
+    if backend.name != 'google-oauth2':
+        return
 
-        if is_new or not user.first_name:
-            user.first_name = response.get('given_name', user.first_name)
+    google_email = response.get("email")
+    if request and user and user.email and user.email != google_email:
+        messages.error(request, "You're logged in as a different user. Please log out first before using this Google account.")
+        logout(request)
+        return
 
-        if is_new or not user.last_name:
-            user.last_name = response.get('family_name', user.last_name)
+    is_new = kwargs.get('is_new', False)
 
-        if is_new:
-            user.is_active = True
-            user.username = user.email
+    if is_new or not user.first_name:
+        user.first_name = response.get('given_name', user.first_name)
 
-            user_type = request.session.get('login_user_type', '').lower()
-            user.is_parent = (user_type == 'parent')
+    if is_new or not user.last_name:
+        user.last_name = response.get('family_name', user.last_name)
 
-        user.save()
+    if is_new:
+        user.is_active = True
+        user.username = user.email  # safe assumption here
+
+        user_type = request.session.get('login_user_type', '').lower()
+        user.is_parent = (user_type == 'parent')
+
+    user.save()
 
 
 
