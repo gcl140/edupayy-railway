@@ -239,9 +239,15 @@
             {% for student in students %}
             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
                 <div class="flex items-center space-x-4">
-                    <img src="{{ student.user.profile_picture.url|default:'https://randomuser.me/api/portraits/lego/2.jpg' }}"
-                         alt="Student"
-                         class="w-16 h-16 rounded-full border-2 border-yellow-500">
+                   {% if student.user.profile_picture %}
+  <img src="{{ student.user.profile_picture.url }}"
+       alt="Student"
+       class="w-16 h-16 rounded-full border-2 border-yellow-500">
+{% else %}
+  <img src="https://randomuser.me/api/portraits/lego/2.jpg"
+       alt="Student"
+       class="w-16 h-16 rounded-full border-2 border-yellow-500">
+{% endif %}
                     <div>
                         <h4 class="font-bold text-darkblue-800">
                             <a href="{% url 'student_detail_dashboard' student.id %}">
