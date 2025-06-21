@@ -1,3 +1,4 @@
+from billing.views import get_dashboard_context
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponseForbidden
 from django.utils.timezone import now
@@ -283,11 +284,12 @@ def profile(request):
             return redirect('profile')  # Redirect to the same page
     else:
         form = CustomUserForm(instance=user)
-    
-    return render(request, 'yuzzaz/profile.html', {
+    context = {
         'user': user,
         'form': form
-    })
+    }    
+    context.update(get_dashboard_context(request))
+    return render(request, 'yuzzaz/profile.html', context)
 
 
 def homepage(request):

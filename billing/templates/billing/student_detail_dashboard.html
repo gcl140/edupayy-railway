@@ -7,7 +7,7 @@
     <div class="bg-gradient-to-r from-darkblue-700 to-darkblue-800 text-white rounded-xl p-6 mb-6 shadow-md">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-                <h2 class="text-2xl font-bold mb-2">Welcome to {{ student.user.get_full_name}}'s Parents Dashboard, {{user.first_name}}!</h2>
+                <h2 class="text-2xl font-bold mb-2">Welcome to {{ student.user.get_full_name}}'s Parents Dashboard, Staff {{user.first_name}}!</h2>
                 <h2 class="text-xl mb-2"><strong>Parent</strong>: {{student.parent.get_full_name}}</h2>
                 <p class="text-blue-100">Here's what's happening with your student payments today.</p>
             </div>
@@ -239,15 +239,9 @@
             {% for student in students %}
             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
                 <div class="flex items-center space-x-4">
-                   {% if student.user.profile_picture %}
-  <img src="{{ student.user.profile_picture.url }}"
-       alt="Student"
-       class="w-16 h-16 rounded-full border-2 border-yellow-500">
-{% else %}
-  <img src="https://randomuser.me/api/portraits/lego/2.jpg"
-       alt="Student"
-       class="w-16 h-16 rounded-full border-2 border-yellow-500">
-{% endif %}
+                    <img src="{% if student.user.profile_picture %}{{ student.user.profile_picture.url }}{% else %}https://randomuser.me/api/portraits/lego/2.jpg{% endif %}"
+                         alt="Student"
+                         class="w-16 h-16 rounded-full border-2 border-yellow-500">
                     <div>
                         <h4 class="font-bold text-darkblue-800">
                             <a href="{% url 'student_detail_dashboard' student.id %}">

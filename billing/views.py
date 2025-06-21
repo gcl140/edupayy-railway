@@ -67,6 +67,7 @@ from .models import StudentProfile, FeeStructure
 from .forms import InvoiceForm
 
 User = get_user_model()
+
 def parents_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
@@ -74,6 +75,60 @@ def parents_required(view_func):
             return render(request, "yuzzaz/403.html")
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+
+def get_dashboard_context(request):
+    user = request.user
+    context = {}
+
+    # Notifications
+    notifications = Notification.objects.filter(Q(is_public=True) | Q(user=user)).distinct()
+    read_ids = set(
+        UserNotificationStatus.objects.filter(
+            user=user,
+            is_read=True,
+            notification__in=notifications
+        ).values_list('notification_id', flat=True)
+    )
+
+    for note in notifications:
+        note.is_unread = note.id not in read_ids
+
+    unread_count = sum(1 for note in notifications if note.is_unread)
+    has_unread_notifications = unread_count > 0
+    unread_notification = UserNotificationStatus.objects.filter(
+        user=user,
+        notification__in=notifications,
+        is_read=False
+    ).exists()
+    all_pending_invoices = Invoice.objects.filter(
+            status__in=['Unpaid', 'Partial']
+        ).order_by('-due_date')
+        
+    if user.is_parent:
+        all_pending_invoices = Invoice.objects.filter(
+        student__parent=user,
+        status__in=['Unpaid', 'Partial']
+    ).order_by('-due_date')
+
+
+    if not user.is_staff and not user.is_parent:
+        profile = StudentProfile.objects.filter(user=user).first()
+        all_pending_invoices = Invoice.objects.filter(
+            student=profile,
+            status__in=['Unpaid', 'Partial']
+        ).order_by('-due_date')
+
+    context.update({
+        'notifications': notifications,
+        'has_unread_notifications': has_unread_notifications,
+        'unread_notification': unread_notification,
+        'unread_count': unread_count,
+        'all_pending_invoices': all_pending_invoices,
+
+    })
+
+    return context
 
 
 @login_required
@@ -153,6 +208,8 @@ def payments_history(request):
         'recent_payments': all_payments,
         'query': query,
     }
+
+    context.update(get_dashboard_context(request))
     return render(request, 'billing/payments_history.html', context)
 
 @login_required
@@ -174,6 +231,7 @@ def feesstructures(request):
         'fees_structures': fees_structures.order_by('-class_level'),
         'query': query,
     }
+    context.update(get_dashboard_context(request))
     return render(request, 'billing/feesstructures.html', context)
 
 
@@ -221,6 +279,7 @@ def invoices(request):
         'all_invoices': all_invoices,
         'query': query,
     }
+    context.update(get_dashboard_context(request))
     return render(request, 'billing/invoices.html', context)
 
 @login_required
@@ -252,6 +311,7 @@ def students(request):
         'user': user,
         'query': query,
     }
+    context.update(get_dashboard_context(request))
     return render(request, 'billing/students.html', context)
 
 @login_required
@@ -276,6 +336,7 @@ def notifications(request):
         'unread_count': unread_count,
         'user': request.user,
     }
+    context.update(get_dashboard_context(request))
     return render(request, 'billing/notifications.html', context)
 
 
@@ -652,7 +713,9 @@ def student_detail_dashboard(request, student_id):
         'invoice_count': Invoice.objects.count(),
         'student_count': StudentProfile.objects.count(),
         'payment_count': Payment.objects.count(),
+
     }
+    context.update(get_dashboard_context(request))
 
     return render(request, 'billing/student_detail_dashboard.html', context)
 
@@ -1064,4 +1127,12 @@ def load_invoice_form_options(request):
         'students': students,
         'fee_structures': fee_structures
     })
+
+
+
+
+
+
+
+
 

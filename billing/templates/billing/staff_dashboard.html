@@ -343,7 +343,7 @@
             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
 
                 <div class="flex items-center space-x-4">
-                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}"
+                    <img src="{% if student.user.profile_picture %}{{ student.user.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}"
                          alt="Student"
                          class="w-16 h-16 rounded-full border-2 border-yellow-500">
                     <div>

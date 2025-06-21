@@ -160,7 +160,7 @@
         <!-- Upcoming Payments -->
         <div class="bg-white rounded-xl shadow-md p-6 h-[500px] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
-                <h3 class="text-lg font-bold text-darkblue-800">Upcoming Payments ({{upcoming_invoices.count}})</h3>
+                <h3 class="text-lg font-bold text-darkblue-800">Upcoming Payments ({{all_pending_invoices.count}})</h3>
                 <a href="{% url 'payments_history' %}" class="text-sm text-yellow-500 hover:text-yellow-600 font-medium">View All</a>
             </div>
 
@@ -249,7 +249,7 @@
             {% for student in students %}
             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
                 <div class="flex items-center space-x-4">
-                    <img src="{{ student.user.profile_picture.url|default:'https://randomuser.me/api/portraits/lego/2.jpg' }}"
+                    <img src="{% if student.user.profile_picture %}{{ student.user.profile_picture.url }}{% else %}https://randomuser.me/api/portraits/lego/2.jpg{% endif %}"
                          alt="Student"
                          class="w-16 h-16 rounded-full border-2 border-yellow-500">
                     <div>
@@ -261,15 +261,6 @@
                             <span class="ml-2 font-medium text-{% if student.balance > 5000 %}red{% else %}green{% endif %}-500">TZS {{ student.balance|intcomma }}</span>
                         </div>
                     </div>
-                </div>
-                <div class="mt-4 flex justify-between">
-                    <a href="{% url 'parents_dashboard'  %}" class="text-sm text-yellow-500 hover:text-yellow-600 font-medium flex items-center">
-                        <i class="fas fa-eye mr-1"></i>
-                        View Details
-                    </a>
-                    <a href="#" class="text-sm bg-yellow-500 hover:bg-yellow-600 text-darkblue-900 font-medium py-1 px-3 rounded transition">
-                        Make Payment
-                    </a>
                 </div>
             </div>
             {% empty %}
